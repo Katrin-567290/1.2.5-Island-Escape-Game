@@ -1,0 +1,39 @@
+import turtle as trtl
+drawer = trtl.Turtle()
+drawer.hideturtle()
+wn = trtl.Screen()
+wn.setup(width=500, height=500)
+
+"""
+This function creates circles of each color of the whirlpool taking in parameters of the 
+circle color (c) and size (s)
+"""
+def whirlpool_circles(c,s):
+  drawer.pencolor(c)
+  drawer.fillcolor(c) 
+  drawer.begin_fill()
+  drawer.circle(s)
+  drawer.end_fill()
+
+"""
+This function creates a WHIRLPOOL! Takes in X and Y COORDINATES depending where 
+you want it.
+"""
+def whirlpool(x,y):
+  # Set up
+  drawer.penup()
+  drawer.goto(x,y)
+  drawer.pendown()
+  # Does each circle layer. Do not mind the names too much, the blues just get darker
+  whirlpool_circles('#a6dfed',40) # Pastel blue
+  drawer.goto(x,y+5)
+  whirlpool_circles('#62c8f0',30) # Light blue
+  drawer.goto(x,y+10)
+  whirlpool_circles('#2bb7ed',20) # Blue
+  whirlpool_circles('#0899d1',10) # ocean blue 
+  drawer.goto(x,y+15)
+  whirlpool_circles('#4867d9',5) # Deep blue
+  whirlpool_circles('#13319e',2.5) # Dark blue
+# FUNCTION is CALLED
+whirlpool(0,0)
+wn.mainloop()
