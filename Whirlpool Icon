@@ -25,15 +25,15 @@ def whirlpool(x,y):
   drawer.goto(x,y)
   drawer.pendown()
   # Does each circle layer. Do not mind the names too much, the blues just get darker
-  whirlpool_circles('#a6dfed',40) # Pastel blue
+  whirlpool_circles('#a6dfed',30) # Pastel blue
   drawer.goto(x,y+5)
-  whirlpool_circles('#62c8f0',30) # Light blue
+  whirlpool_circles('#62c8f0',20) # Light blue
   drawer.goto(x,y+10)
-  whirlpool_circles('#2bb7ed',20) # Blue
-  whirlpool_circles('#0899d1',10) # ocean blue 
+  whirlpool_circles('#2bb7ed',10) # Blue
+  whirlpool_circles('#0899d1',5) # ocean blue 
   drawer.goto(x,y+15)
-  whirlpool_circles('#4867d9',5) # Deep blue
-  whirlpool_circles('#13319e',2.5) # Dark blue
+  whirlpool_circles('#4867d9',2.5) # Deep blue
+  whirlpool_circles('#13319e',1.25) # Dark blue
 # FUNCTION is CALLED
 whirlpool(0,0)
 wn.mainloop()
