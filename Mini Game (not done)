@@ -1,0 +1,62 @@
+import turtle as trtl
+import random
+import trace
+wn = trtl.Screen()
+wn.tracer(0)
+wn.setup(width=500, height=500)
+# Set up
+player = trtl.Turtle()
+drawer = trtl.Turtle()
+def circle(x,y,r,color): # Takes in x,y coordinates and color
+  drawer.goto(x,y)
+  drawer.pencolor(color)
+  drawer.fillcolor(color)
+  drawer.begin_fill()
+  drawer.circle(r)
+  drawer.end_fill()
+def background():
+  drawer.hideturtle()
+  circle(0,-300,1000,'#609cf7')
+  x = 0
+  y = 0
+  colors = ['#6aa2f7','#79a8f2','#8eb9fa','#a2c4fa','#c0d7fa','#e3eeff'] # darkest to lightest
+  radius = [300,250,200,150,100,50]
+  for i in range(6):
+    circle(x,y,radius[i],colors[i])
+    y += 40
+# Coin
+def coin(x,y):
+  coin = trtl.Turtle()
+  coin.hideturtle()
+  coin.penup()
+  coin.penup()
+  # outer yellow part
+  coin.goto(x,y)
+  coin.pendown()
+  coin.pencolor('#FFD700') # gold
+  coin.fillcolor('#FFD700') # gold
+  coin.begin_fill()
+  coin.circle(20)
+  coin.end_fill()
+  # Orange inner part
+  coin.goto(x,y+5)
+  coin.pencolor('#ffc400') # orange gold
+  coin.fillcolor('#ffc400') # orange gold
+  coin.begin_fill()
+  coin.circle(15)
+  coin.end_fill()
+  # The square hole
+  coin.goto(x,y+11)
+  coin.pencolor('#79a8f2') # dull blue
+  coin.fillcolor('#79a8f2') # dull blue
+  coin.begin_fill()
+  coin.circle(8,360,4)
+  coin.end_fill()
+  # returns the x,y coordinates in a list
+  coin_list = [x,y]
+  return coin_list
+# EVENTS
+background()
+for i in range(9):
+  coin(random.randint(-240,240),random.randint(-240,240)) 
+wn.mainloop()
