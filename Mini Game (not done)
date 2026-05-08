@@ -1,11 +1,17 @@
 import turtle as trtl
 import random
 import trace
+import math
 wn = trtl.Screen()
 wn.tracer(0)
 wn.setup(width=500, height=500)
 # Set up
 player = trtl.Turtle()
+player.penup()
+player.goto(0,-210)
+player.setheading(90)
+player.turtlesize(2)
+# Drawer
 drawer = trtl.Turtle()
 def circle(x,y,r,color): # Takes in x,y coordinates and color
   drawer.goto(x,y)
@@ -55,8 +61,54 @@ def coin(x,y):
   # returns the x,y coordinates in a list
   coin_list = [x,y]
   return coin_list
+# Shark
+def shark():
+  shark_head = trtl.Turtle()
+  shark_head.penup()
+  shark_head.fillcolor('blue')
+  shark_head.turtlesize(3)
+  shark_head.shape('circle')
+  shark_head.goto(random.randint(-250,250),random.randint(-250,250))
+  shark_head.setheading(random.randint(0,360))
+  x = shark_head.xcor()
+  y = shark_head.ycor()
+  shark_cors = [x,y]
+  return shark_cors
+# Player movements
+def face_up():
+  player.setheading(90)
+def face_right():
+  player.setheading(0)
+def face_down():
+  player.setheading(270)
+def face_left():
+  player.setheading(180)
+def move_player():
+  player.forward(4)
+  x = player.xcor()
+  y = player.ycor()
+  player_cors = [x,y]
+  return player_cors
+# Distance calculator using distance formula
+def distance_calc():
+  player_cors = move_player()
+  shark_cors = shark()
+  distance = math.sqrt((player_cors[0] - shark_cors[0])**2 + (player_cors[1] - shark_cors[1])**2)
+  print(distance)
 # EVENTS
 background()
 for i in range(9):
   coin(random.randint(-240,240),random.randint(-240,240)) 
+wn.tracer(1)
+distance_calc()
+# Moving player
+wn.onkeypress(face_up, "Up")
+wn.onkeypress(face_right, "Right")
+wn.onkeypress(face_down, "Down")
+wn.onkeypress(face_left, "Left")
+wn.onkeypress(move_player, "g")
+wn.listen()
+
+
+
 wn.mainloop()
