@@ -59,8 +59,15 @@ def coin(x,y):
   coin.circle(8,360,4)
   coin.end_fill()
   # returns the x,y coordinates in a list
-  coin_list = [x,y]
-  return coin_list
+  coin_tuples = (x,y)
+  return coin_tuples
+# Taking coin positions
+def coin_positions():
+  coin_positions = []
+  for i in range(9):
+    coin_pos = coin(random.randint(-240,240),random.randint(-240,240)) 
+    coin_positions.append(coin_pos)
+  return coin_positions
 # Shark
 def shark():
   shark_head = trtl.Turtle()
@@ -93,14 +100,19 @@ def move_player():
 def distance_calc():
   player_cors = move_player()
   shark_cors = shark()
-  distance = math.sqrt((player_cors[0] - shark_cors[0])**2 + (player_cors[1] - shark_cors[1])**2)
-  print(distance)
+  coin_cors = coin_positions()
+  distance_ps = math.sqrt((player_cors[0] - shark_cors[0])**2 + (player_cors[1] - shark_cors[1])**2)
+  distance_pc = []
+  for i in range(9):
+    coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
+    distance_pc.append(coin_dis)
+  print(distance_pc)
+
+# The movement and detection of everything....
 # EVENTS
 background()
-for i in range(9):
-  coin(random.randint(-240,240),random.randint(-240,240)) 
-wn.tracer(1)
 distance_calc()
+wn.tracer(1)
 # Moving player
 wn.onkeypress(face_up, "Up")
 wn.onkeypress(face_right, "Right")
@@ -108,6 +120,9 @@ wn.onkeypress(face_down, "Down")
 wn.onkeypress(face_left, "Left")
 wn.onkeypress(move_player, "g")
 wn.listen()
+
+
+
 
 
 
