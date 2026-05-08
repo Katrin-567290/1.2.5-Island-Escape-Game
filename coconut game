@@ -1,0 +1,328 @@
+import turtle as trtl
+import random
+import time #i think this is the only new import
+
+wn = trtl.Screen()
+wn.setup(500, 500)
+wn.tracer(0) #should tracer be inside the function?
+
+
+
+#one function for entire coconut game
+def coconut_catch_game():
+    #background set up 
+    bg = trtl.Turtle()
+    bg.hideturtle()
+    bg.speed(0)
+
+    bg.penup()
+    bg.goto(-250, -250)
+    bg.color("#83d1eb")
+    bg.begin_fill()
+    for i in range(4):
+        bg.forward(500)
+        bg.left(90)
+    bg.end_fill()
+
+    state = "intro"
+    intro_index = 0
+    mode = "easy"
+
+    writer = trtl.Turtle()
+    writer.hideturtle()
+    writer.penup()
+    writer.goto(-200, 120)
+
+    selector = trtl.Turtle()
+    selector.hideturtle()
+    selector.penup()
+
+    #explains rules
+    intro = ["COCONUT CATCHER","Use LEFT / RIGHT arrows to move","Catch falling coconuts",
+        "Easy = 25 points MAX in 45s","Hard = 50 points MAX in 30s","Press SPACE to continue"]
+
+    def show_intro():
+        writer.clear()
+        writer.write(intro[intro_index] + "\n\nPress SPACE",font=("Arial", 12, "bold"))
+
+    show_intro()
+
+    def space():
+        nonlocal state, intro_index #allows varibales inside function to be changed 
+
+        if state == "intro":
+            intro_index += 1 #moves to next line of intro text
+            if intro_index >= len(intro):#if we reached end of intro list
+                state = "mode"#switch to mode selection screen
+                draw_mode()
+            else:
+                show_intro()
+
+        elif state == "mode": #if we are not on the mode selection screen, start the game
+            start_game()
+
+    def left():
+        nonlocal mode #allows changing the difficulty mode variable
+        if state == "mode":
+            mode = "easy"
+            draw_mode()
+
+    def right():
+        nonlocal mode
+        if state == "mode":
+            mode = "hard"
+            draw_mode()
+
+    wn.listen()
+    wn.onkeypress(space, "space")
+    wn.onkeypress(left, "Left")
+    wn.onkeypress(right, "Right")
+
+    def draw_mode():
+        writer.clear()
+        selector.clear()
+
+        writer.goto(-120, 60)
+        writer.write("SELECT MODE", font=("Arial", 16, "bold"))
+
+        writer.goto(-120, 20)
+        writer.write("LEFT = EASY", font=("Arial", 12))
+
+        writer.goto(-120, -10)
+        writer.write("RIGHT = HARD", font=("Arial", 12))
+
+        writer.goto(-120, -60)
+        writer.write("PRESS SPACE TO START", font=("Arial", 12, "bold"))
+
+        selector.goto(-140, 20 if mode == "easy" else -10)
+        selector.write(">", font=("Arial", 18, "bold"))
+    
+
+
+    # game start
+    def start_game():
+
+        nonlocal state
+        state = "playing"
+
+        writer.clear()
+        selector.clear()
+
+        # settings, amount of coconuts falling depending on mode and the speed with which they fall
+        if mode == "easy":
+            total_coconuts = 25
+            duration = 45
+            speed = 0.5   
+            points = 1
+        else:
+            total_coconuts = 50
+            duration = 30
+            speed = 1.0 
+            points = 1
+
+        spawn_interval = duration / total_coconuts 
+
+        # player (thing that catches coconuts)
+        player = trtl.Turtle()
+        player.shape("square")
+        player.shapesize(0.5, 3)
+        player.color("black")
+        player.penup()
+        player.goto(0, -220)
+
+        # palm trees
+        tree_tops = []
+        tree_labels = [] # for indicating when coconut will drop
+
+        def draw_tree(x):
+            t = trtl.Turtle()
+            t.hideturtle()
+            t.speed(0)
+
+            t.penup()
+            t.goto(x, -250)
+            t.setheading(90)
+            t.color("#703a16")
+            t.width(14)
+            t.pendown()
+            t.forward(260)
+
+            top_x = x
+            top_y = 10
+          
+            #function for stationary coconuts on top of both trees
+            def draw_coconuts(x, y, size=10, spacing=15): #x,y is the center of the cluster & moves entire group
+                coco = trtl.Turtle()
+                coco.hideturtle()
+                coco.speed(0)
+
+                positions = [(0, 0),(spacing, spacing),(-spacing, spacing)]
+
+                for ox, oy in positions:
+                    coco.penup()
+                    coco.goto(x + ox, y + oy) #moves each coconut relative to cluster center 
+                    coco.pendown()
+                    coco.color("#96642d")
+                    coco.begin_fill()
+                    coco.circle(size)
+                    coco.end_fill()
+
+                # dots (these move with the coconut shape)
+                    for dx, dy in [(3, 5), (-3, 5), (0, 9)]:
+                        coco.penup()
+                        coco.goto(x + ox + dx, y + oy + dy)
+                        coco.pendown()
+                        coco.color("black")
+                        coco.begin_fill()
+                        coco.circle(1.2)
+                        coco.end_fill()
+            
+            #palm tree leaves
+            def leaf(angle):
+                t.penup()
+                t.goto(top_x, top_y)
+                t.setheading(angle)
+
+                t.color("#089606")
+                t.width(3)
+                t.pendown()
+
+                t.circle(40, 15)
+
+                for i in range(15):
+                    t.forward(6)
+                    t.left(55)
+                    t.forward(10)
+                    t.backward(10)
+                    t.right(110)
+                    t.forward(10)
+                    t.backward(10)
+                    t.left(55)
+
+                t.penup()
+
+            for a in [170, 140, 110, 60, 30, 10]: #angles at which leaves are drawn
+                leaf(a)
+            draw_coconuts(top_x, top_y-15, size=10, spacing=15)
+
+            tree_tops.append((x, top_y)) #list stores where trees are
+
+            # where warning label is 
+            label = trtl.Turtle()
+            label.hideturtle()
+            label.penup()
+            label.goto(x - 10, top_y + 50)
+            tree_labels.append(label)
+
+        draw_tree(-160)
+        draw_tree(160)
+
+        # game data
+        coconuts = []
+        score = 0
+        start_time = time.time()
+        last_spawn_time = time.time()
+        spawned = 0
+
+        #warning system variables
+        warning_active = False #prevents multiple warnings from appearing at once
+        warning_time = 0 #stores time when warning appears 
+        warning_index = 0 #keeps track of which tree the warning is on
+
+        # coconut spawn
+        def spawn():
+            nonlocal spawned, warning_active
+
+            if spawned >= total_coconuts:
+                return
+
+            x, y = tree_tops[warning_index]  #so that coconut and warnign spawn at same tree
+            offset = random.randint(-50, 50) #how far from the tree coconuts can fall
+
+            c = trtl.Turtle()
+            c.shape("circle")
+            c.color("#96642d")
+            c.penup()
+            c.goto(x + offset, y)
+
+            #adds coconut, turtle object (the coconut), x position (offset from tree,random), starting y (top of tree)
+            coconuts.append({"t": c, "x": x + offset, "y": y})
+
+            spawned += 1 #keeps track of coconuts created
+
+            #clears warning after spawn
+            tree_labels[warning_index].clear()
+            warning_active = False
+
+        # update
+        def update():
+            nonlocal score #allows score to be changed inside this function
+
+            for c in coconuts:
+                c["y"] -= speed #moves coconut downward
+                c["t"].goto(c["x"], c["y"]) #updates visual position on screen
+
+                #if player catches coconut, collision is detected and coconut hides
+                if abs(player.xcor() - c["x"]) < 25 and abs(player.ycor() - c["y"]) < 25:
+                    score += points #increases score when caught
+                    c["y"] = -999 #move coconut off screen
+                    c["t"].hideturtle() #hide coconut visually
+
+            #once there are several coconuts, makes the newest one fall a little faster
+            #negative list indexing
+            if len(coconuts) > 3:
+                coconuts[-1]["y"] -= 0.3
+
+        def cleanup():
+          #removes coconuts that fell off the bottom, keeps only the ones still on screen
+            coconuts[:] = [c for c in coconuts if c["y"] > -240]
+
+            #makes every other coconut fall a little faster, stepped list indexing
+            for i in range(0, len(coconuts), 2):
+                coconuts[i]["y"] -= 0.2
+
+        #player movement (controls)
+        def move_left():
+            player.setx(player.xcor() - 20)
+
+        def move_right():
+            player.setx(player.xcor() + 20)
+
+        wn.onkeypress(move_left, "Left")
+        wn.onkeypress(move_right, "Right")
+
+        # loop
+        running = True
+
+        while running:#keeps game running intil we manually stop it
+
+            wn.update()
+
+            now = time.time() #gets current time (in seconds)
+
+            # trigger warning shortly before spawn
+            if (not warning_active) and (spawned < total_coconuts):
+                if now - last_spawn_time >= spawn_interval - 1.0: #how long before coconut spawn the label spawns
+                    warning_index = random.randint(0, len(tree_labels) - 1)
+                    tree_labels[warning_index].color("red") 
+                    tree_labels[warning_index].write("!", font=("Arial", 20, "bold"))
+                    warning_active = True #prevents from other warning appearing at the same time
+                    warning_time = now
+
+            if now - last_spawn_time >= spawn_interval: #checks if enough time passed since last coconut spawn
+                spawn()
+                last_spawn_time = now #resets timer 
+
+            if now - start_time >= duration:#stops loop if game time passes
+                running = False
+
+            update()
+            cleanup()
+
+        writer.goto(-120, 0)
+        writer.write("GAME OVER\nScore: " + str(score),font=("Arial", 16, "bold"))
+        return score #returns the points to the main code
+
+# running the game
+coconut_catch_game()
+wn.mainloop()
