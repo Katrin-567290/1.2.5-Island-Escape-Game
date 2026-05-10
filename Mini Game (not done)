@@ -176,6 +176,8 @@ def distance_calc(x,y):
   shark_dis = math.sqrt((player_cors[0] - shark_cor[0])**2 + (player_cors[1] - shark_cor[1])**2)
   if shark_dis <= 40:
     print("You got eaten by the shark") # CHANGE WHEN TIMER IS ADDED 
+  if coin_list == []:
+    print("Congrats! You got all the coins!")
     
   # detecting if the player touches the coin
 
