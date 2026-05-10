@@ -86,14 +86,17 @@ def coin_positions():
 shark_list = []
 def shark():
   # Set up
+  wn.tracer(0)
   x = random.randint(-250,250)
   y = random.randint(-250,250)
   # Shark tail
   shark_tail = trtl.Turtle()
+  shark_tail.penup()
   shark_tail.fillcolor('blue')
   shark_tail.shape('triangle')
   shark_tail.turtlesize(3)
   shark_tail.goto(x-40,y)
+  shark_tail.speed(7) # CHANGE WHEN LEVEL IS MADE
   shark_list.append(shark_tail)
   # Shark head
   shark_head = trtl.Turtle()
@@ -102,6 +105,7 @@ def shark():
   shark_head.turtlesize(3)
   shark_head.shape('circle')
   shark_head.goto(x,y)
+  shark_head.speed(7) # CHANGE WHEN LEVEL IS MADE
   shark_list.append(shark_head)
   # Shark jaw
   shark_jaw = trtl.Turtle()
@@ -112,11 +116,33 @@ def shark():
   shark_jaw.shape('triangle')
   shark_jaw.setheading(180)
   shark_jaw.goto(x+22,y)
+  shark_jaw.speed(7) # CHANGE WHEN LEVEL IS MADE
   shark_list.append(shark_jaw)
   x = shark_head.xcor()
   y = shark_head.ycor()
   shark_cors = [x,y]
-  return shark_cors
+  wn.tracer(1)
+  # moving shark
+  for i in range(2): # CHANGE WHEN TIMER IS MADE
+    new_x = random.randint(-250,250)
+    new_y = random.randint(-250,250)
+    print(new_x,new_y)
+    current_x = shark_cors[0]
+    current_y = shark_cors[1]
+    # Using the slope formula (ish) to move the shark unit by unit
+    x_move = new_x - current_x
+    y_move = new_y - current_y
+    if abs(y_move) > abs(x_move):
+      x_change = x_move/abs(y_move)
+      y_change = y_move/abs(y_move)
+      total = abs(y_move)
+    if abs(x_move) >= abs(y_move):
+      x_change = x_move/abs(x_move)
+      y_change = y_move/abs(x_move)
+      total = abs(x_move)
+    for i in range(total):
+      for i in range(3):
+        shark_list[i].goto(shark_list[i].xcor()+x_change,shark_list[i].ycor()+y_change)
 # Player movements
 def face_up():
   player.setheading(90)
@@ -129,10 +155,8 @@ def face_left():
 
 # Distance calculator using distance formula
 coin_cors = coin_positions()
-shark_cors = shark()
 def distance_calc(x,y):
   player_cors = [x,y]
-  distance_ps = math.sqrt((player_cors[0] - shark_cors[0])**2 + (player_cors[1] - shark_cors[1])**2)
   distance_pc = []
   for i in range(len(coin_list)):
     coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
@@ -165,6 +189,7 @@ wn.onkeypress(face_right, "Right")
 wn.onkeypress(face_down, "Down")
 wn.onkeypress(face_left, "Left")
 wn.onkeypress(move_player, "g")
+shark()
 wn.listen()
 
 
