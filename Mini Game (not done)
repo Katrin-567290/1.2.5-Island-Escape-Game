@@ -157,6 +157,7 @@ def face_left():
 coin_cors = coin_positions()
 def distance_calc(x,y):
   player_cors = [x,y]
+  # Distance from player to coin
   distance_pc = []
   for i in range(len(coin_list)):
     coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
@@ -168,7 +169,13 @@ def distance_calc(x,y):
       coin_list.pop(i)
       coin_cors.pop(i)
       break
-
+  # Distance from player to the shark
+  shark_x = shark_list[1].xcor()
+  shark_y = shark_list[1].ycor()
+  shark_cor = [shark_x,shark_y]
+  shark_dis = math.sqrt((player_cors[0] - shark_cor[0])**2 + (player_cors[1] - shark_cor[1])**2)
+  if shark_dis <= 40:
+    print("You got eaten by the shark") # CHANGE WHEN TIMER IS ADDED 
     
   # detecting if the player touches the coin
 
@@ -189,8 +196,9 @@ wn.onkeypress(face_right, "Right")
 wn.onkeypress(face_down, "Down")
 wn.onkeypress(face_left, "Left")
 wn.onkeypress(move_player, "g")
-shark()
 wn.listen()
+shark()
+
 
 
 
