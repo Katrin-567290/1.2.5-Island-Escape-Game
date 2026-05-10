@@ -83,14 +83,36 @@ def coin_positions():
     coin_positions.append(coin_pos)
   return coin_positions
 # Shark
+shark_list = []
 def shark():
+  # Set up
+  x = random.randint(-250,250)
+  y = random.randint(-250,250)
+  # Shark tail
+  shark_tail = trtl.Turtle()
+  shark_tail.fillcolor('blue')
+  shark_tail.shape('triangle')
+  shark_tail.turtlesize(3)
+  shark_tail.goto(x-40,y)
+  shark_list.append(shark_tail)
+  # Shark head
   shark_head = trtl.Turtle()
   shark_head.penup()
   shark_head.fillcolor('blue')
   shark_head.turtlesize(3)
   shark_head.shape('circle')
-  shark_head.goto(random.randint(-250,250),random.randint(-250,250))
-  shark_head.setheading(random.randint(0,360))
+  shark_head.goto(x,y)
+  shark_list.append(shark_head)
+  # Shark jaw
+  shark_jaw = trtl.Turtle()
+  shark_jaw.penup()
+  shark_jaw.fillcolor('#609cf7')
+  shark_jaw.pencolor('#609cf7')
+  shark_jaw.turtlesize(1.3)
+  shark_jaw.shape('triangle')
+  shark_jaw.setheading(180)
+  shark_jaw.goto(x+22,y)
+  shark_list.append(shark_jaw)
   x = shark_head.xcor()
   y = shark_head.ycor()
   shark_cors = [x,y]
@@ -115,14 +137,14 @@ def distance_calc(x,y):
   for i in range(len(coin_list)):
     coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
     distance_pc.append(coin_dis)
+    # Detecting if the turtle is close enough to the coin
   for i in range(len(distance_pc)):
     if distance_pc[i] <= 10:
       coin_list[i].hideturtle()
       coin_list.pop(i)
-      distance_pc.pop(i)
+      coin_cors.pop(i)
       break
-  print(distance_pc)
-      
+
     
   # detecting if the player touches the coin
 
