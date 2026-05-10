@@ -31,6 +31,7 @@ def background():
     circle(x,y,radius[i],colors[i])
     y += 40
 # Coin
+"""
 def coin(x,y):
   coin = trtl.Turtle()
   coin.hideturtle()
@@ -59,6 +60,19 @@ def coin(x,y):
   coin.circle(8,360,4)
   coin.end_fill()
   # returns the x,y coordinates in a list
+  coin_tuples = (x,y)
+  return coin_tuples
+"""
+coin_list = []
+def coin(x,y):
+  coin = trtl.Turtle()
+  coin_list.append(coin)
+  coin.penup()
+  coin.shape('circle')
+  coin.pencolor('#FFD700') # gold
+  coin.fillcolor('#FFD700') # gold
+  coin.turtlesize(2)
+  coin.goto(x,y)
   coin_tuples = (x,y)
   return coin_tuples
 # Taking coin positions
@@ -90,28 +104,38 @@ def face_down():
   player.setheading(270)
 def face_left():
   player.setheading(180)
+
+# Distance calculator using distance formula
+coin_cors = coin_positions()
+shark_cors = shark()
+def distance_calc(x,y):
+  player_cors = [x,y]
+  distance_ps = math.sqrt((player_cors[0] - shark_cors[0])**2 + (player_cors[1] - shark_cors[1])**2)
+  distance_pc = []
+  for i in range(len(coin_list)):
+    coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
+    distance_pc.append(coin_dis)
+  for i in range(len(distance_pc)):
+    if distance_pc[i] <= 10:
+      coin_list[i].hideturtle()
+      coin_list.pop(i)
+      distance_pc.pop(i)
+      break
+  print(distance_pc)
+      
+    
+  # detecting if the player touches the coin
+
 def move_player():
   player.forward(4)
   x = player.xcor()
   y = player.ycor()
-  player_cors = [x,y]
-  return player_cors
-# Distance calculator using distance formula
-def distance_calc():
-  player_cors = move_player()
-  shark_cors = shark()
-  coin_cors = coin_positions()
-  distance_ps = math.sqrt((player_cors[0] - shark_cors[0])**2 + (player_cors[1] - shark_cors[1])**2)
-  distance_pc = []
-  for i in range(9):
-    coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
-    distance_pc.append(coin_dis)
-  print(distance_pc)
+  distance_calc(x,y)
 
 # The movement and detection of everything....
+
 # EVENTS
 background()
-distance_calc()
 wn.tracer(1)
 # Moving player
 wn.onkeypress(face_up, "Up")
