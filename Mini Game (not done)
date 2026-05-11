@@ -14,14 +14,15 @@ player.turtlesize(2)
 # Set up
 font_setup = ("Arial", 20, "normal")
 # Timer info
-timer = 3
+timer = 120
 counter_interval = 1000   #1000 represents 1 second
 timer_up = False
 counter =  trtl.Turtle()
 counter.penup()
 counter.hideturtle()
 counter.goto(130,210) # Sets the countdown to the top right corner
-# Drawer
+# Timer
+# The timer
 def countdown():
   global timer, timer_up
   counter.clear()
@@ -30,16 +31,17 @@ def countdown():
     timer_up = True 
     drawer.clear()
     for i in range(3):
-      shark_list[i].clear()
+      shark_list[i].hideturtle()
     for i in range(len(coin_list)):
-      coin_list[i].clear()
+      coin_list[i].hideturtle()
+    player.hideturtle()
     counter.clear()
-    print("Good Game!")
+    print("Good Game!") # CHANGE WHEN POINTS ARE MADE
   else:
     counter.write("Timer: " + str(timer), font=font_setup)
     timer -= 1
     counter.getscreen().ontimer(countdown, counter_interval) 
-
+# Drawer
 drawer = trtl.Turtle()
 def circle(x,y,r,color): # Takes in x,y coordinates and color
   drawer.goto(x,y)
@@ -110,6 +112,7 @@ def coin_positions():
     coin_pos = coin(random.randint(-240,240),random.randint(-240,240)) 
     coin_positions.append(coin_pos)
   return coin_positions
+
 # Shark
 shark_list = []
 def shark():
@@ -151,7 +154,7 @@ def shark():
   shark_cors = [x,y]
   wn.tracer(1)
   # moving shark
-  for i in range(2): # CHANGE WHEN TIMER IS MADE
+  while timer != 0: 
     new_x = random.randint(-250,250)
     new_y = random.randint(-250,250)
     print(new_x,new_y)
@@ -168,6 +171,8 @@ def shark():
       x_change = x_move/abs(x_move)
       y_change = y_move/abs(x_move)
       total = abs(x_move)
+    print(x_change)
+    print(y_change)
     for i in range(total):
       for i in range(3):
         shark_list[i].goto(shark_list[i].xcor()+x_change,shark_list[i].ycor()+y_change)
@@ -215,7 +220,7 @@ def move_player():
   y = player.ycor()
   distance_calc(x,y)
 
-# The movement and detection of everything....
+
 
 # EVENTS
 background()
