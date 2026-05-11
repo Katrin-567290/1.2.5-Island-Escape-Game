@@ -11,7 +11,35 @@ player.penup()
 player.goto(0,-210)
 player.setheading(90)
 player.turtlesize(2)
+# Set up
+font_setup = ("Arial", 20, "normal")
+# Timer info
+timer = 3
+counter_interval = 1000   #1000 represents 1 second
+timer_up = False
+counter =  trtl.Turtle()
+counter.penup()
+counter.hideturtle()
+counter.goto(130,210) # Sets the countdown to the top right corner
 # Drawer
+def countdown():
+  global timer, timer_up
+  counter.clear()
+  if timer == 0:
+    counter.write("Time's Up", font=font_setup) 
+    timer_up = True 
+    drawer.clear()
+    for i in range(3):
+      shark_list[i].clear()
+    for i in range(len(coin_list)):
+      coin_list[i].clear()
+    counter.clear()
+    print("Good Game!")
+  else:
+    counter.write("Timer: " + str(timer), font=font_setup)
+    timer -= 1
+    counter.getscreen().ontimer(countdown, counter_interval) 
+
 drawer = trtl.Turtle()
 def circle(x,y,r,color): # Takes in x,y coordinates and color
   drawer.goto(x,y)
@@ -199,6 +227,7 @@ wn.onkeypress(face_down, "Down")
 wn.onkeypress(face_left, "Left")
 wn.onkeypress(move_player, "g")
 wn.listen()
+countdown()
 shark()
 
 
