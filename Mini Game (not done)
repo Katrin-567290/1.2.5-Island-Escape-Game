@@ -11,10 +11,10 @@ player.penup()
 player.goto(0,-210)
 player.setheading(90)
 player.turtlesize(2)
-# Set up
 font_setup = ("Arial", 20, "normal")
+points = [] # point counts
 # Timer info
-timer = 120
+timer = 60
 counter_interval = 1000   #1000 represents 1 second
 timer_up = False
 counter =  trtl.Turtle()
@@ -36,7 +36,8 @@ def countdown():
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
-    print("Good Game!") # CHANGE WHEN POINTS ARE MADE
+    total_points = len(points) * 5
+    print("You got", str(total_points), "points")
   else:
     counter.write("Timer: " + str(timer), font=font_setup)
     timer -= 1
@@ -157,7 +158,6 @@ def shark():
   while timer != 0: 
     new_x = random.randint(-250,250)
     new_y = random.randint(-250,250)
-    print(new_x,new_y)
     current_x = shark_cors[0]
     current_y = shark_cors[1]
     # Using the slope formula (ish) to move the shark unit by unit
@@ -171,8 +171,6 @@ def shark():
       x_change = x_move/abs(x_move)
       y_change = y_move/abs(x_move)
       total = abs(x_move)
-    print(x_change)
-    print(y_change)
     for i in range(total):
       for i in range(3):
         shark_list[i].goto(shark_list[i].xcor()+x_change,shark_list[i].ycor()+y_change)
@@ -198,6 +196,8 @@ def distance_calc(x,y):
     # Detecting if the turtle is close enough to the coin
   for i in range(len(distance_pc)):
     if distance_pc[i] <= 10:
+      points.append(5)
+      print(points)
       coin_list[i].hideturtle()
       coin_list.pop(i)
       coin_cors.pop(i)
@@ -208,10 +208,28 @@ def distance_calc(x,y):
   shark_cor = [shark_x,shark_y]
   shark_dis = math.sqrt((player_cors[0] - shark_cor[0])**2 + (player_cors[1] - shark_cor[1])**2)
   if shark_dis <= 40:
-    print("You got eaten by the shark") # CHANGE WHEN TIMER IS ADDED 
+    print("You got eaten by the shark")
+    drawer.clear()
+    for i in range(3):
+      shark_list[i].hideturtle()
+    for i in range(len(coin_list)):
+      coin_list[i].hideturtle()
+    player.hideturtle()
+    counter.clear()
+    total_points = len(points) * 5
+    print("You got", str(total_points), "points")
   if coin_list == []:
     print("Congrats! You got all the coins!")
-    
+    drawer.clear()
+    for i in range(3):
+      shark_list[i].hideturtle()
+    for i in range(len(coin_list)):
+      coin_list[i].hideturtle()
+    player.hideturtle()
+    counter.clear()
+    total_points = len(points) * 5
+    print("You got", str(total_points), "points")
+    return total_points # RETURNS THE TOTAL POINTS
   # detecting if the player touches the coin
 
 def move_player():
@@ -219,8 +237,6 @@ def move_player():
   x = player.xcor()
   y = player.ycor()
   distance_calc(x,y)
-
-
 
 # EVENTS
 background()
@@ -234,11 +250,6 @@ wn.onkeypress(move_player, "g")
 wn.listen()
 countdown()
 shark()
-
-
-
-
-
 
 
 wn.mainloop()
