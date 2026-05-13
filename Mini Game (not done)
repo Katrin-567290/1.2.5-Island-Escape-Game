@@ -5,12 +5,30 @@ import math
 wn = trtl.Screen()
 wn.tracer(0)
 wn.setup(width=500, height=500)
+
+# Input from player
+t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
+t_size = int(input("What size do you want your turtle to be? Choose from interval [2,5]"))
+shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
+
+# Depending on user input users can get more poitns
+t_size_pt = 0
+shark_size_pt = 0
+def point_calculator():
+  if t_size <= 5 and t_size >= 2:
+    difference = t_size - 2
+    t_size_pt = int(difference) * 2
+  if 3 <= shark_size <= 6:
+    difference = shark_size - 3
+    shark_size_pt = int(difference) * 2
+point_calculator()
 # Set up
 player = trtl.Turtle()
 player.penup()
 player.goto(0,-210)
 player.setheading(90)
-player.turtlesize(2)
+player.shape(t_shape)
+player.turtlesize(t_size)
 font_setup = ("Arial", 20, "normal")
 points = [] # point counts
 # Timer info
@@ -36,7 +54,7 @@ def countdown():
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
-    total_points = len(points) * 5
+    total_points = len(points) * 5 + t_size_pt + shark_size_pt
     print("You got", str(total_points), "points")
   else:
     counter.write("Timer: " + str(timer), font=font_setup)
@@ -62,38 +80,7 @@ def background():
     circle(x,y,radius[i],colors[i])
     y += 40
 # Coin
-"""
-def coin(x,y):
-  coin = trtl.Turtle()
-  coin.hideturtle()
-  coin.penup()
-  coin.penup()
-  # outer yellow part
-  coin.goto(x,y)
-  coin.pendown()
-  coin.pencolor('#FFD700') # gold
-  coin.fillcolor('#FFD700') # gold
-  coin.begin_fill()
-  coin.circle(20)
-  coin.end_fill()
-  # Orange inner part
-  coin.goto(x,y+5)
-  coin.pencolor('#ffc400') # orange gold
-  coin.fillcolor('#ffc400') # orange gold
-  coin.begin_fill()
-  coin.circle(15)
-  coin.end_fill()
-  # The square hole
-  coin.goto(x,y+11)
-  coin.pencolor('#79a8f2') # dull blue
-  coin.fillcolor('#79a8f2') # dull blue
-  coin.begin_fill()
-  coin.circle(8,360,4)
-  coin.end_fill()
-  # returns the x,y coordinates in a list
-  coin_tuples = (x,y)
-  return coin_tuples
-"""
+
 coin_list = []
 def coin(x,y):
   coin = trtl.Turtle()
@@ -120,21 +107,21 @@ def shark():
   # Set up
   wn.tracer(0)
   x = random.randint(-250,250)
-  y = random.randint(-250,250)
+  y = random.randint(-200,250)
   # Shark tail
   shark_tail = trtl.Turtle()
   shark_tail.penup()
   shark_tail.fillcolor('blue')
   shark_tail.shape('triangle')
-  shark_tail.turtlesize(3)
-  shark_tail.goto(x-40,y)
+  shark_tail.turtlesize(shark_size)
+  shark_tail.goto(x-shark_size*10,y)
   shark_tail.speed(7) # CHANGE WHEN LEVEL IS MADE
   shark_list.append(shark_tail)
   # Shark head
   shark_head = trtl.Turtle()
   shark_head.penup()
   shark_head.fillcolor('blue')
-  shark_head.turtlesize(3)
+  shark_head.turtlesize(shark_size)
   shark_head.shape('circle')
   shark_head.goto(x,y)
   shark_head.speed(7) # CHANGE WHEN LEVEL IS MADE
@@ -144,22 +131,24 @@ def shark():
   shark_jaw.penup()
   shark_jaw.fillcolor('#609cf7')
   shark_jaw.pencolor('#609cf7')
-  shark_jaw.turtlesize(1.3)
+  # perfecting jaw position
+  if shark_size == 3:
+    shark_jaw.turtlesize(shark_size/2)
+    shark_jaw.goto(x+22,y)
+  else: 
+    shark_jaw.turtlesize(shark_size/2)
+    shark_jaw.goto(x+shark_size*7,y)
   shark_jaw.shape('triangle')
   shark_jaw.setheading(180)
-  shark_jaw.goto(x+22,y)
   shark_jaw.speed(7) # CHANGE WHEN LEVEL IS MADE
   shark_list.append(shark_jaw)
-  x = shark_head.xcor()
-  y = shark_head.ycor()
-  shark_cors = [x,y]
   wn.tracer(1)
   # moving shark
   while timer != 0: 
     new_x = random.randint(-250,250)
     new_y = random.randint(-250,250)
-    current_x = shark_cors[0]
-    current_y = shark_cors[1]
+    current_x = shark_head.xcor()
+    current_y = shark_head.ycor()
     # Using the slope formula (ish) to move the shark unit by unit
     x_move = new_x - current_x
     y_move = new_y - current_y
@@ -171,7 +160,7 @@ def shark():
       x_change = x_move/abs(x_move)
       y_change = y_move/abs(x_move)
       total = abs(x_move)
-    for i in range(total):
+    for i in range(int(total)):
       for i in range(3):
         shark_list[i].goto(shark_list[i].xcor()+x_change,shark_list[i].ycor()+y_change)
 # Player movements
@@ -197,7 +186,6 @@ def distance_calc(x,y):
   for i in range(len(distance_pc)):
     if distance_pc[i] <= 10:
       points.append(5)
-      print(points)
       coin_list[i].hideturtle()
       coin_list.pop(i)
       coin_cors.pop(i)
@@ -216,7 +204,7 @@ def distance_calc(x,y):
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
-    total_points = len(points) * 5
+    total_points = len(points) * 5 + t_size_pt + shark_size_pt
     print("You got", str(total_points), "points")
   if coin_list == []:
     print("Congrats! You got all the coins!")
@@ -227,7 +215,7 @@ def distance_calc(x,y):
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
-    total_points = len(points) * 5
+    total_points = len(points) * 5 + t_size_pt + shark_size_pt
     print("You got", str(total_points), "points")
     return total_points # RETURNS THE TOTAL POINTS
   # detecting if the player touches the coin
@@ -237,6 +225,8 @@ def move_player():
   x = player.xcor()
   y = player.ycor()
   distance_calc(x,y)
+
+
 
 # EVENTS
 background()
