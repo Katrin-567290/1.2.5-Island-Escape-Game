@@ -5,13 +5,34 @@ import math
 wn = trtl.Screen()
 wn.tracer(0)
 wn.setup(width=500, height=500)
-
+# Instructions
+def rules():
+  writer = trtl.Turtle()
+  writer.hideturtle()
+  writer.penup()
+  writer.goto(-10,50)
+  writer.write("Rules", font=("Arial", 19))
+  writer.goto(-100,20)
+  writer.write("1. Gain as many points as possible by collecting coins!", font=("Arial", 19))
+  writer.goto(-50,-10)
+  writer.write("2. Avoid the shark!", font=("Arial", 19))
+  writer.goto(-150,-40)
+  writer.write("3. Bigger size of yourself or the shark gets you more points!", font=("Arial", 19))
+  writer.goto(-40,-70)
+  writer.write("GOOD LUCK!", font=("Arial", 19))
+  writer.goto(-20,-100)
+  writer.write("Press 's' to start game", font=("Arial", 19))
+rules()
+wn.onkeypress(game, "s")
+wn.listen()
+wn.update()
 # Input from player
+player_name = input("What is your name?")
 t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
 t_size = int(input("What size do you want your turtle to be? Choose from interval [2,5]"))
 shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
 
-# Depending on user input users can get more poitns
+# Depending on user input users can get more points
 t_size_pt = 0
 shark_size_pt = 0
 def point_calculator():
@@ -55,7 +76,7 @@ def countdown():
     player.hideturtle()
     counter.clear()
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
-    print("You got", str(total_points), "points")
+    final_screen(total_points)
   else:
     counter.write("Timer: " + str(timer), font=font_setup)
     timer -= 1
@@ -205,7 +226,7 @@ def distance_calc(x,y):
     player.hideturtle()
     counter.clear()
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
-    print("You got", str(total_points), "points")
+    final_screen(total_points)
   if coin_list == []:
     print("Congrats! You got all the coins!")
     drawer.clear()
@@ -216,9 +237,28 @@ def distance_calc(x,y):
     player.hideturtle()
     counter.clear()
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
-    print("You got", str(total_points), "points")
+    final_screen(total_points)
     return total_points # RETURNS THE TOTAL POINTS
-  # detecting if the player touches the coin
+# Final screen
+def final_screen(total_points):
+  writer = trtl.Turtle()
+  writer.hideturtle()
+  writer.penup()
+  global player_name
+  player_name = player_name.lower() # Everything lowercase
+  player_name = player_name.title() # Captialize first letter
+  
+  player_name_list = list(player_name)
+  if len(player_name_list) > 8:
+    for i in range(len(player_name_list) - 8):
+      player_name_list.pop()
+    player = "".join(player_name_list)
+    dots = "..."
+    player_name = player + dots
+  else:
+    player_name = "".join(player_name_list)
+  writer.goto(-150,0)
+  writer.write("Congrats! " + player_name + " got " + str(total_points) + " points!", font=("Arial", 19))
 
 def move_player():
   player.forward(4)
@@ -227,19 +267,20 @@ def move_player():
   distance_calc(x,y)
 
 
+def game():
+  # EVENTS
+  background()
+  wn.tracer(1)
+  # Moving player
+  wn.onkeypress(face_up, "Up")
+  wn.onkeypress(face_right, "Right")
+  wn.onkeypress(face_down, "Down")
+  wn.onkeypress(face_left, "Left")
+  wn.onkeypress(move_player, "g")
+  wn.listen()
+  countdown()
+  shark()
 
-# EVENTS
-background()
-wn.tracer(1)
-# Moving player
-wn.onkeypress(face_up, "Up")
-wn.onkeypress(face_right, "Right")
-wn.onkeypress(face_down, "Down")
-wn.onkeypress(face_left, "Left")
-wn.onkeypress(move_player, "g")
-wn.listen()
-countdown()
-shark()
 
 
 wn.mainloop()
