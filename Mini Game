@@ -2,6 +2,7 @@ import turtle as trtl
 import random
 import trace
 import math
+# Screen setup
 wn = trtl.Screen()
 wn.tracer(0)
 wn.setup(width=500, height=500)
@@ -10,6 +11,8 @@ def rules():
   rule = trtl.Turtle()
   rule.hideturtle()
   rule.penup()
+  rule.goto(-170,100)
+  rule.write("WELCOME TO THE SHARK GAME!", font=("Arial", 20))
   rule.goto(-30,50)
   rule.write("Rules:", font=("Arial", 20))
   rule.goto(-210,20)
@@ -22,7 +25,6 @@ def rules():
   rule.write("GOOD LUCK!", font=("Arial", 18))
   rule.goto(-90,-100)
   rule.write("Press 's' to start game", font=("Arial", 18))
-rules()
 
 # Input from player
 player_name = ""
@@ -34,14 +36,15 @@ shark_size = 0
 t_size_pt = 0
 shark_size_pt = 0
 def point_calculator():
-  global t_size_pt, shark_size_pt 
+  global t_size_pt
+  global shark_size_pt
   if t_size <= 5 and t_size >= 2:
     difference = t_size - 2
     t_size_pt = int(difference) * 2
   if 3 <= shark_size <= 6:
     difference = shark_size - 3
     shark_size_pt = int(difference) * 2
-point_calculator()
+
 # Set up
 player = trtl.Turtle()
 def making_player():
@@ -52,6 +55,7 @@ def making_player():
   player.turtlesize(t_size)
 font_setup = ("Arial", 20, "normal")
 points = [] # point counts
+
 # Timer info
 timer = 45
 counter_interval = 1000   #1000 represents 1 second
@@ -78,10 +82,12 @@ def countdown():
     wn.clear() 
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
     final_screen(total_points)
+    return total_points
   else:
     counter.write("Timer: " + str(timer), font=font_setup)
     timer -= 1
     counter.getscreen().ontimer(countdown, counter_interval) 
+    
 # Drawer
 drawer = trtl.Turtle()
 def circle(x,y,r,color): # Takes in x,y coordinates and color
@@ -101,8 +107,8 @@ def background():
   for i in range(6):
     circle(x,y,radius[i],colors[i])
     y += 40
+    
 # Coin
-
 coin_list = []
 def coin(x,y):
   coin = trtl.Turtle()
@@ -185,6 +191,7 @@ def shark():
     for i in range(int(total)):
       for i in range(3):
         shark_list[i].goto(shark_list[i].xcor()+x_change,shark_list[i].ycor()+y_change)
+
 # Player movements
 def face_up():
   player.setheading(90)
@@ -241,8 +248,9 @@ def distance_calc(x,y):
     wn.clear()
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
     final_screen(total_points)
-    return total_points # RETURNS THE TOTAL POINTS
-# Final screen
+    return total_points # RETURNS THE TOTAL POINTS KATRIN IF YOU NEED THIS!
+
+# Final screen that displays points and name
 def final_screen(total_points):
   writer = trtl.Turtle()
   writer.hideturtle()
@@ -269,6 +277,7 @@ def move_player():
   y = player.ycor()
   distance_calc(x,y)
 
+rules() # Calls function
 
 def game():
   global player_name
@@ -279,6 +288,7 @@ def game():
   t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
   t_size = int(input("What size do you want your turtle to be? Choose from interval [2,5]"))
   shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
+  point_calculator()
   making_player()
   # EVENTS
   background()
