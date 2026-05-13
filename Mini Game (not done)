@@ -34,6 +34,7 @@ shark_size = 0
 t_size_pt = 0
 shark_size_pt = 0
 def point_calculator():
+  global t_size_pt, shark_size_pt 
   if t_size <= 5 and t_size >= 2:
     difference = t_size - 2
     t_size_pt = int(difference) * 2
