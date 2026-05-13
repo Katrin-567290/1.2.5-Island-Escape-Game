@@ -7,30 +7,28 @@ wn.tracer(0)
 wn.setup(width=500, height=500)
 # Instructions
 def rules():
-  writer = trtl.Turtle()
-  writer.hideturtle()
-  writer.penup()
-  writer.goto(-10,50)
-  writer.write("Rules", font=("Arial", 19))
-  writer.goto(-100,20)
-  writer.write("1. Gain as many points as possible by collecting coins!", font=("Arial", 19))
-  writer.goto(-50,-10)
-  writer.write("2. Avoid the shark!", font=("Arial", 19))
-  writer.goto(-150,-40)
-  writer.write("3. Bigger size of yourself or the shark gets you more points!", font=("Arial", 19))
-  writer.goto(-40,-70)
-  writer.write("GOOD LUCK!", font=("Arial", 19))
-  writer.goto(-20,-100)
-  writer.write("Press 's' to start game", font=("Arial", 19))
+  rule = trtl.Turtle()
+  rule.hideturtle()
+  rule.penup()
+  rule.goto(-30,50)
+  rule.write("Rules:", font=("Arial", 20))
+  rule.goto(-210,20)
+  rule.write("1. Press arrow keys for turning and press 'g' to move!", font=("Arial", 18))
+  rule.goto(-150,-10)
+  rule.write("2. Collect coins, but avoid the shark!", font=("Arial", 18))
+  rule.goto(-190,-40)
+  rule.write("3. Bigger player or shark gets you more points!", font=("Arial", 18))
+  rule.goto(-60,-70)
+  rule.write("GOOD LUCK!", font=("Arial", 18))
+  rule.goto(-90,-100)
+  rule.write("Press 's' to start game", font=("Arial", 18))
 rules()
-wn.onkeypress(game, "s")
-wn.listen()
-wn.update()
+
 # Input from player
-player_name = input("What is your name?")
-t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
-t_size = int(input("What size do you want your turtle to be? Choose from interval [2,5]"))
-shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
+player_name = ""
+t_shape = ""
+t_size = 0
+shark_size = 0
 
 # Depending on user input users can get more points
 t_size_pt = 0
@@ -45,15 +43,16 @@ def point_calculator():
 point_calculator()
 # Set up
 player = trtl.Turtle()
-player.penup()
-player.goto(0,-210)
-player.setheading(90)
-player.shape(t_shape)
-player.turtlesize(t_size)
+def making_player():
+  player.penup()
+  player.goto(0,-210)
+  player.setheading(90)
+  player.shape(t_shape)
+  player.turtlesize(t_size)
 font_setup = ("Arial", 20, "normal")
 points = [] # point counts
 # Timer info
-timer = 60
+timer = 45
 counter_interval = 1000   #1000 represents 1 second
 timer_up = False
 counter =  trtl.Turtle()
@@ -75,6 +74,7 @@ def countdown():
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
+    wn.clear() 
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
     final_screen(total_points)
   else:
@@ -216,7 +216,7 @@ def distance_calc(x,y):
   shark_y = shark_list[1].ycor()
   shark_cor = [shark_x,shark_y]
   shark_dis = math.sqrt((player_cors[0] - shark_cor[0])**2 + (player_cors[1] - shark_cor[1])**2)
-  if shark_dis <= 40:
+  if shark_dis <= (shark_size *15):
     print("You got eaten by the shark")
     drawer.clear()
     for i in range(3):
@@ -225,6 +225,7 @@ def distance_calc(x,y):
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
+    wn.clear()
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
     final_screen(total_points)
   if coin_list == []:
@@ -236,6 +237,7 @@ def distance_calc(x,y):
       coin_list[i].hideturtle()
     player.hideturtle()
     counter.clear()
+    wn.clear()
     total_points = len(points) * 5 + t_size_pt + shark_size_pt
     final_screen(total_points)
     return total_points # RETURNS THE TOTAL POINTS
@@ -268,6 +270,15 @@ def move_player():
 
 
 def game():
+  global player_name
+  global t_shape
+  global t_size
+  global shark_size
+  player_name = input("What is your name?")
+  t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
+  t_size = int(input("What size do you want your turtle to be? Choose from interval [2,5]"))
+  shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
+  making_player()
   # EVENTS
   background()
   wn.tracer(1)
@@ -280,7 +291,8 @@ def game():
   wn.listen()
   countdown()
   shark()
-
+wn.onkeypress(game, "s")
+wn.listen()
 
 
 wn.mainloop()
