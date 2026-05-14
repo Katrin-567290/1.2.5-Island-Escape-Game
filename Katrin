@@ -1,0 +1,1647 @@
+import turtle as trtl
+import random as rand
+import time
+from tkinter import PhotoImage
+import trace
+import math
+
+#basic turtle
+t=trtl.Turtle()
+t.speed(10)
+t.hideturtle()
+
+#drawing turtle
+drawer = trtl.Turtle()
+drawer.speed(10)
+drawer.hideturtle()
+
+#painting turtle
+painter = trtl.Turtle()
+painter.speed(10)
+painter.hideturtle()
+
+#playing piece turtle
+piece=trtl.Turtle()
+piece.hideturtle()
+piece.penup()
+piece.speed(8)
+piece.setheading(90)
+piece.goto(-155,-205)
+
+#maze-drawing turtle
+maze_painter = trtl.Turtle()
+maze_painter.hideturtle()
+maze_painter.speed(0)
+maze_painter.pensize(5)
+maze_painter.penup()
+maze_painter.goto(0, 0) 
+maze_painter.pendown()
+
+#coconut game turtles
+coco = trtl.Turtle()
+coco.hideturtle()
+p = trtl.Turtle()
+p.hideturtle()
+player = trtl.Turtle()
+player.hideturtle()
+
+#writing turtles
+writer = trtl.Turtle()
+writer.hideturtle()
+writer.penup()
+writer.goto(-200, 120)
+
+#delaying turtle
+delayer=trtl.Turtle()
+delayer.hideturtle()
+delayer.penup()
+delayer.speed(10)
+
+#for rolling the dice on the board while playing
+def rolled():
+    global win, game_state
+    if win:
+        return
+    if game_state != "board":
+        return
+    piece.showturtle()
+    dice()
+
+wn = trtl.Screen()
+wn.setup(500, 500)
+wn.bgcolor("#A2DFEB")
+wn.tracer(0)
+
+tiles=[]
+colors=["#F17777","#FFA96F","#FFBF77","#FFE590","#CCDD8A","#59C6EA","#CE71B8","#F3AEBF","#c7e3a4","#fd9a9c","#3d7f97","#D9E1FF","#7A75BE","#F177A8","#FD998A","#FEBA9C","#8FD1F3","#FDE673","#F8AF6E","#B77DD6","#DEB8DA","#F5B5B5","#C0DDA6","#CBF2D3","#D6AEC0","#A1EEF5",]
+tiles_x=[]
+tiles_y=[]
+games=[6,15,19]
+played=[False,False,False]
+encounter=[]
+encounter_x=[]
+encounter_y=[]
+feature=rand.randint(0,1)
+tile=-1
+end=26
+points=0
+leap=0
+rolls=0
+base_y = 115
+win=False
+game_state = "board"
+ground_coconuts=[]
+
+color=colors[rand.randint(0,len(colors)-1)]
+tiles.append(color)
+colors.remove(color)
+color=colors[rand.randint(0,len(colors)-1)]
+tiles.append(color)
+colors.remove(color)
+for i in range(2,26,1):
+  color=colors[rand.randint(0,len(colors)-1)]
+  tiles.append(color)
+  colors.remove(color)
+
+#for drawing a rectangle
+def rect(width,length):
+  for i in range(2):
+    t.forward(width)
+    t.right(90)
+    t.forward(length)
+    t.right(90)
+#for drawing the background and tiles
+def background():
+  #ocean
+  t.penup()
+  t.goto(-250,-250)
+  t.setheading(90)
+  t.pendown()
+  for i in range(3):
+    t.begin_fill()
+    if i==0:
+      t.fillcolor("#B7DBD6")
+      t.pencolor("#B7DBD6")
+    if i==1:
+      t.fillcolor("#90D1C8")
+      t.pencolor("#90D1C8")
+    if i==2:
+      t.fillcolor("#7CC0CF")
+      t.pencolor("#7CC0CF")
+    rect(115,500)
+    t.end_fill()
+    t.forward(115)
+    
+  #cyan start square
+  t.penup()
+  t.goto(-180,-220)
+  t.pendown()
+  t.pencolor("cyan")
+  t.fillcolor("cyan")
+  t.begin_fill()
+  rect(50,50)
+  t.end_fill()
+  t.goto(-154,-195)
+  t.pencolor("#DA1467")
+  t.write("Start!", align="center",font=("Arial",16,"bold"))
+  
+  #tiles
+  t.penup()
+  t.goto(-180,-170)
+  bg_x=-180
+  bg_y=-170
+  for i in range(8):
+    tiles_x.append(bg_x+25)
+    tiles_y.append(bg_y)
+    t.pencolor(tiles[i])
+    t.fillcolor(tiles[i])
+    t.begin_fill()
+    rect(50,50)
+    t.end_fill()
+    bg_x+=50
+    t.goto(bg_x,bg_y)
+  bg_x-=50
+  bg_y+=50
+  t.goto(bg_x,bg_y)
+  for i in range(8,10,1):
+    tiles_x.append(bg_x+25)
+    tiles_y.append(bg_y)
+    t.pencolor(tiles[i])
+    t.fillcolor(tiles[i])
+    t.begin_fill()
+    rect(50,50)
+    t.end_fill()
+    bg_y+=50
+    t.goto(bg_x,bg_y)
+  bg_y-=50
+  bg_x-=50
+  t.goto(bg_x,bg_y)
+  for i in range(10,17,1):
+    tiles_x.append(bg_x+25)
+    tiles_y.append(bg_y)
+    t.pencolor(tiles[i])
+    t.fillcolor(tiles[i])
+    t.begin_fill()
+    rect(50,50)
+    t.end_fill()
+    bg_x-=50
+    t.goto(bg_x,bg_y)
+  bg_y+=50
+  bg_x+=50
+  t.goto(bg_x,bg_y)
+  for i in range(17,19,1):
+    tiles_x.append(bg_x+25)
+    tiles_y.append(bg_y)
+    t.pencolor(tiles[i])
+    t.fillcolor(tiles[i])
+    t.begin_fill()
+    rect(50,50)
+    t.end_fill()
+    bg_y+=50
+    t.goto(bg_x,bg_y)
+  bg_y-=50
+  bg_x+=50
+  t.goto(bg_x,bg_y)
+  for i in range(19,26,1):
+    tiles_x.append(bg_x+25)
+    tiles_y.append(bg_y)
+    t.pencolor(tiles[i])
+    t.fillcolor(tiles[i])
+    t.begin_fill()
+    rect(50,50)
+    t.end_fill()
+    bg_x+=50
+    t.goto(bg_x,bg_y)
+    
+  # Sun
+  painter.penup()
+  painter.goto(220, 240)
+  painter.dot(52, "yellow")
+  
+  draw_round_mountain(25, base_y, 85) 
+  draw_triangle_mountain(145, base_y, 120, 75)
+  draw_island(-160, -250)
+  # Beach Base
+  painter.penup()
+  painter.goto(20, base_y)
+  painter.pendown()
+  painter.pensize(1)
+  painter.color("black")
+  painter.fillcolor("khaki") 
+  painter.begin_fill()
+  painter.setheading(0)
+  painter.forward(280)
+  painter.right(90)
+  painter.forward(18)
+  painter.right(90)
+  painter.forward(280)
+  painter.right(90)
+  painter.forward(18)
+  painter.end_fill()
+  # Palm Trees
+  tree_spots = [40, 80, 120, 210, 250] # Gap left for the person
+  for spot in tree_spots:
+      draw_palm(spot, base_y)
+  
+  
+  
+  for j in range(3):
+    if feature==0:
+      whirlpool(tiles_x[21],tiles_y[21])
+      encounter_x.append(tiles_x[21])
+      encounter_y.append(tiles_y[21])
+      encounter.append(21)
+      break
+    if feature==1:
+      if j==0:
+        place=rand.randint(2,5)
+        whirlpool(tiles_x[place],tiles_y[place])
+        encounter_x.append(tiles_x[place])
+        encounter_y.append(tiles_y[place])
+        encounter.append(place)
+      elif j==1:
+        place=rand.randint(9,14)
+        whirlpool(tiles_x[place],tiles_y[place])
+        encounter_x.append(tiles_x[place])
+        encounter_y.append(tiles_y[place])
+        encounter.append(place)
+      else:
+        place=rand.randint(20,24)
+        whirlpool(tiles_x[place],tiles_y[place])
+        encounter_x.append(tiles_x[place])
+        encounter_y.append(tiles_y[place])
+#for directing direction of piece 
+def pieces():
+  if tile<7:
+    piece.setheading(0)
+  elif (tile>=7 and tile<9) or (tile>=16 and tile<18):
+    piece.setheading(90)
+  elif tile<17 and tile>8:
+    piece.setheading(180)
+  else:
+    piece.setheading(0)
+#for the randomly generated dice number for movement and checking for whirlpools/minigames
+def dice():
+  global win, game_state, tile, rolls, points
+  # global win
+  print("The dice rolls.")
+  roll=rand.randint(1,6)
+  delay()
+  global tile
+  # tile+=roll
+  propose=tile+roll
+  if not played[0] and propose > 7:
+    print("You must complete Coconut Catch first!")
+    piece.hideturtle()
+    coconut_catch_game()
+    game_state = "board"
+
+  # Maze not done → cannot pass tile 16
+  if not played[1] and propose > 16:
+      print("You must complete the Maze Game first!")
+      piece.hideturtle()
+      maze_game()
+      return
+  
+  # Final game lock
+  if not played[2] and propose >= 25:
+      print("You must complete the Shark Game first!")
+  tile=propose
+  print("You went forward "+str(roll)+" places.\n")
+  if tile<25:
+    piece.goto(tiles_x[tile],tiles_y[tile]+25)
+  pieces()
+  global rolls
+  rolls+=1
+  whirl=False
+  play=False
+  global points
+  if tile<end:
+    play=False
+    whirl=False
+    for i in range(len(encounter)):
+      if encounter[i]==tile:
+        whirl=True
+        print("You fell into the whirlpool.")
+        delay()
+        forward_back=rand.randint(0,1)
+        print("The coin flips.")
+        delay()
+        if forward_back==0:
+          print("You got heads, you win.")
+          if len(encounter)==1:
+            leap=rand.randint(1,5)
+            tile+=leap
+            print("You went forward "+str(leap)+" places.\n")
+            pieces()
+            points+=5
+            if tile>=end:
+              if played[2]==False:
+                print("You spot some coins and grab one. You got some points.")
+                points+=5
+                delay()
+                print("A fin emerges from the water.")
+                print("The shark wants your points.")
+                print("It starts chasing you.\n")
+                played[2]=True
+                piece.hideturtle()
+                shark_game()
+                game_state = "board"
+                # piece.goto(tiles_x[tile],tiles_y[tile]+25)
+              win=True
+              won()
+          else:
+            if i==0:
+              leap=rand.randint(1,5)
+              tile+=leap
+              print("You went forward "+str(leap)+" places.\n")
+              points+=5
+              if tile>7 and played[i]==False:
+                print("You caught a coconut as it fell.")
+                print("You got some points.")
+                points+=5
+                delay()
+                print("You get ready to catch some more.\n")
+                played[i]=True
+                piece.hideturtle()
+                piece.goto(tiles_x[tile],tiles_y[tile]+25)
+                coconut_catch_game()
+            elif i==1:
+              leap=rand.randint(1,5)
+              tile+=leap
+              print("You went forward "+str(leap)+" places.\n")
+              points+=5
+              if tile>16 and played[i]==False:
+                print("You found a boat.")
+                delay()
+                print("You climb in and start it.")
+                delay()
+                print("A maze appears.\n")
+                piece.hideturtle()
+                piece.goto(tiles_x[tile],tiles_y[tile]+25)
+                maze_game()
+                played[i]=True
+                return
+            elif i==2:
+              leap=rand.randint(1,5)
+              tile+=leap
+              print("You went forward "+str(leap)+" places.\n")
+              points+=5
+              if tile>=end and played[i]==False:
+                print("You spot some coins and grab one. You got some points.")
+                points+=5
+                delay()
+                print("A fin emerges from the water.")
+                print("The shark wants your points.")
+                print("It starts chasing you.\n")
+                piece.hideturtle()
+                shark_game()
+                piece.goto(tiles_x[tile],tiles_y[tile]+25)
+                played[i]=True
+                win=True
+        else:
+          print("You got tails, you lose.")
+          if len(encounter)==1:
+            leap=rand.randint(1,5)
+            tile-=leap
+            if tile<0:
+              tile=0
+            print("You went back "+str(leap)+" places.\n")
+            points-=5
+            if tile==19 and played[2]==False:
+              print("You spot some coins and grab one. You got some points.")
+              points+=5
+              delay()
+              print("A fin emerges from the water.")
+              print("The shark wants your points.")
+              print("It starts chasing you.\n")
+              piece.hideturtle()
+              shark_game()
+              piece.goto(tiles_x[tile],tiles_y[tile]+25)
+              played[i]=True
+          else:
+            if i==0:
+              leap=rand.randint(3,5)
+              tile-=leap
+              print("You went back "+str(leap)+" places.\n")
+              if tile<0:
+                tile=0
+              points-=5
+              if tile==6 and played[i]==False:
+                print("You caught a coconut as it fell.")
+                print("You got some points.")
+                points+=5
+                delay()
+                print("You get ready to catch some more.\n")
+                played[i]=True
+                piece.hideturtle()
+                coconut_catch_game()
+            elif i==1:
+              leap=rand.randint(1,5)
+              tile-=leap
+              print("You went back "+str(leap)+" places.\n")
+              points-=5
+              if tile==15 and played[i]==False:
+                print("You found a boat.")
+                delay()
+                print("You climb in and start it.")
+                delay()
+                print("A maze appears.\n")
+                piece.hideturtle()
+                maze_game()
+                played[i]=True
+            else:
+              leap=rand.randint(1,5)
+              tile-=leap
+              print("You went back "+str(leap)+" places.\n")
+              points-=5
+              if tile==19 and played[i]==False:
+                print("You spot some coins and grab one. You got some points.")
+                points+=5
+                delay()
+                print("A fin emerges from the water.")
+                print("The shark wants your points.")
+                print("It starts chasing you.\n")
+                piece.hideturtle()
+                shark_game()
+                played[i]=True
+        piece.goto(tiles_x[tile],tiles_y[tile]+25)
+    for i in range(len(games)):
+      if games[i]==tile and played[i]==False:
+        play=True
+        if i==0:
+          print("You caught a coconut as it fell.")
+          print("You got some points.")
+          points+=5
+          delay()
+          print("You get ready to catch some more.\n")
+          played[i]=True
+          piece.hideturtle()
+          piece.goto(tiles_x[tile],tiles_y[tile]+25)
+          coconut_catch_game()
+        elif i==1:
+          print("You found a boat.")
+          delay()
+          print("You climb in and start it.")
+          delay()
+          print("A maze appears.\n")
+          maze_game()
+          piece.hideturtle()
+          piece.goto(tiles_x[tile],tiles_y[tile]+25)
+          played[i]=True
+          return
+        else:
+          print("You spot some coins and grab one. You got some points.")
+          points+=5
+          delay()
+          print("A fin emerges from the water.")
+          print("The shark wants your points.")
+          print("It starts chasing you.\n")
+          piece.hideturtle()
+          shark_game()
+          piece.goto(tiles_x[tile],tiles_y[tile]+25)
+          played[i]=True
+    if play==False and whirl==False:
+      pieces()
+  else:
+    if played[2]==False:
+        print("You spot some coins and grab one. You got some points.")
+        points+=5
+        delay()
+        print("A fin emerges from the water.")
+        print("The shark wants your points.")
+        print("It starts chasing you.\n")
+        piece.hideturtle()
+        shark_game()
+        played[2]=True
+    piece.goto(tiles_x[25],tiles_y[25]+25)
+    win=True
+  wn.update()
+#for executing win text
+def won():
+  global win
+  win=True
+  global points
+  global rolls
+  print("\nCongratulations! You've completed the game!")
+  delay()
+  if rolls<=6:
+    print("100 points for 6 or less rolls!")
+    points+=100
+  elif rolls<=10:
+    print("50 points for 10 or less rolls!")
+    points+=50
+  elif rolls<=15:
+    print("25 points for 15 or less rolls!")
+    points+=25
+  else:
+    print("10 points for more than 15 rolls!")
+    points+=10
+  delay()
+  print("You got a total of "+str(points)+" points.")
+  delay()
+  print("You took "+str(rolls)+" rolls to finish.")
+  delay()
+  writer.penup()
+  writer.goto(-120, 30)
+  writer.pendown()
+  writer.write(str(points)+" points", font=("Arial", 40, "bold"))
+  writer.penup()
+  writer.goto(-120, -30)
+  writer.pendown()
+  writer.write(str(rolls)+" rolls", font=("Arial", 40, "bold"))
+  delay()
+  print("Good job!")
+#for binding "r" key for roll
+def bind_board_keys():
+  wn.onkey(rolled, "r")
+
+"""
+This function creates circles of each color of the whirlpool taking in parameters of the 
+circle color (c) and size (s)
+"""
+def whirlpool_circles(c,s):
+  drawer.pencolor(c)
+  drawer.fillcolor(c) 
+  drawer.begin_fill()
+  drawer.circle(s)
+  drawer.end_fill()
+
+"""
+This function creates a WHIRLPOOL! Takes in X and Y COORDINATES depending where 
+you want it.
+"""
+def whirlpool(x,y):
+  # Set up
+  drawer.penup()
+  drawer.goto(x,y)
+  drawer.pendown()
+  # Does each circle layer. Do not mind the names too much, the blues just get darker
+  whirlpool_circles('#a6dfed',30) # Pastel blue
+  drawer.goto(x,y+5)
+  whirlpool_circles('#62c8f0',20) # Light blue
+  drawer.goto(x,y+10)
+  whirlpool_circles('#2bb7ed',10) # Blue
+  whirlpool_circles('#0899d1',5) # ocean blue 
+  drawer.goto(x,y+15)
+  whirlpool_circles('#4867d9',2.5) # Deep blue
+  whirlpool_circles('#13319e',1.25) # Dark blue
+#for drawing round mountain
+def draw_round_mountain(x, y, radius):
+    painter.penup()
+    painter.goto(x + (radius * 2), y)
+    painter.setheading(90)
+    painter.pendown()
+    painter.fillcolor("forest green")
+    painter.begin_fill()
+    painter.circle(radius, 180) 
+    painter.goto(x + (radius * 2), y)
+    painter.end_fill()
+#for drawing triangle mountain
+def draw_triangle_mountain(x, y, width, height):
+    painter.penup()
+    painter.goto(x, y)
+    painter.pendown()
+    painter.fillcolor("forest green")
+    painter.begin_fill()
+    painter.goto(x + width/2, y + height) 
+    painter.goto(x + width, y)            
+    painter.goto(x, y)                    
+    painter.end_fill()
+#for drawing palm trees
+def draw_palm(x, y):
+    painter.penup()
+    painter.goto(x, y)
+    painter.setheading(90)
+    painter.pendown()
+    painter.pensize(3)
+    painter.color("sienna")
+    painter.forward(25)
+    painter.color("dark green")
+    for _ in range(5):
+        painter.left(144)
+        painter.forward(12)
+        painter.backward(12)
+# 3. New Function for a Waving Person on the Beach
+def draw_waving_person(x, y):
+    painter.penup()
+    painter.color("black")
+    painter.pensize(2)
+    # Body
+    painter.goto(x, y)
+    painter.setheading(90)
+    painter.pendown()
+    painter.forward(15)
+    # Head
+    painter.right(90)
+    painter.circle(4)
+    # Waving Arm
+    painter.penup()
+    painter.goto(x, y + 10)
+    painter.pendown()
+    painter.goto(x - 8, y + 18) # Arm up
+    # Other Arm
+    painter.penup()
+    painter.goto(x, y + 10)
+    painter.pendown()
+    painter.goto(x + 6, y + 5)
+    # Legs
+    painter.penup()
+    painter.goto(x, y)
+    painter.pendown()
+    painter.goto(x - 4, y - 6)
+    painter.penup()
+    painter.goto(x, y)
+    painter.pendown()
+    painter.goto(x + 4, y - 6)
+
+# coconuts
+def draw_coconuts(x, y, size=10, spacing=15): #x,y is the center of the cluster & moves entire group
+    coco = trtl.Turtle()
+    coco.hideturtle()
+    coco.speed(0)
+
+    positions = [(0, 0),(spacing, spacing),(-spacing, spacing)]
+
+    for ox, oy in positions:
+        coco.penup()
+        coco.goto(x + ox, y + oy) #moves each coconut relative to cluster center 
+        coco.pendown()
+        coco.color('#AA6E46')
+        coco.begin_fill()
+        coco.circle(size)
+        coco.end_fill()
+
+        # dots (these move with the coconut shape)
+        for dx, dy in [(3, 5), (-3, 5), (0, 9)]:
+            coco.penup()
+            coco.goto(x + ox + dx, y + oy + dy)
+            coco.pendown()
+            coco.color("black")
+            coco.begin_fill()
+            coco.circle(1.5)
+            coco.end_fill()
+
+# palm leaves
+def palm_leaf(t, x, y, angle): #x,y is where leaf starts (top of trunk)
+    t.penup()
+    t.goto(x, y)
+    t.setheading(angle)
+
+    t.color('#228B22')
+    t.width(3)
+    t.pendown()
+
+    # slight base curve
+    t.circle(50, 20)
+
+    for i in range(8):
+        t.penup()
+        t.forward(5)
+        t.pendown()
+
+        #zig-zag shape
+        t.left(50)
+        t.forward(8)
+        t.backward(8)
+        t.right(100)
+        t.forward(8)
+        t.backward(8)
+        t.left(50)
+
+    t.penup()
+    
+# island w/ tree
+def draw_island(base_x, base_y): #bottom right of island, moves the island, everything on it, & floating coconuts
+    t = trtl.Turtle()
+    t.hideturtle()
+    t.speed(0)
+
+    # half circle from the ground
+    t.penup()
+    t.goto(base_x, base_y)
+    t.setheading(90)
+    t.color('#EDC9AF')
+    t.begin_fill()
+
+    t.circle(40, 180)
+    t.goto(base_x, base_y) 
+
+    t.end_fill()
+
+    #tree
+    trunk_x = base_x-40 #moves tree left/right on island
+    trunk_y = base_y + 25 #moves tree up/down on island
+
+    t.penup()
+    t.goto(trunk_x, trunk_y)
+    t.setheading(90)
+    t.color('#6E3719')
+    t.width(12)
+    t.pendown()
+    t.forward(55)
+
+    top_x = trunk_x
+    top_y = trunk_y + 55 
+
+    # palm crown
+    palm_leaf(t, top_x, top_y, 160) #last number is the angle the leaf is at
+    palm_leaf(t, top_x, top_y, 130)
+    palm_leaf(t, top_x, top_y, 105)
+    palm_leaf(t, top_x, top_y, 55)
+    palm_leaf(t, top_x, top_y, 30)
+    palm_leaf(t, top_x, top_y, 0)
+    
+
+
+    # coconut on tree
+    draw_coconuts(top_x, top_y -13, size=8, spacing=12)
+
+    # floating coconuts
+    draw_coconuts(base_x + 50, base_y + 10, size=8, spacing=15)
+    
+    draw_coconuts(tiles_x[6], tiles_y[6]+12, size=8, spacing=15)
+
+    wn.update()
+
+#one function for entire coconut game
+def coconut_catch_game():
+    global game_state
+    game_state = "coconut"
+    # wn.onkeypress(None, "Up")
+    # wn.onkeypress(None, "Down")
+    # wn.onkeypress(None, "Left")
+    # wn.onkeypress(None, "Right")
+    # wn.onkeypress(None, "space")
+    #background set up 
+    bg = trtl.Turtle()
+    bg.hideturtle()
+    bg.speed(0)
+
+    bg.penup()
+    bg.goto(-250, -250)
+    bg.color("#83d1eb")
+    bg.begin_fill()
+    for i in range(4):
+        bg.forward(500)
+        bg.left(90)
+    bg.end_fill()
+
+    state = "intro"
+    intro_index = 0
+    mode = "easy"
+
+    selector = trtl.Turtle()
+    selector.hideturtle()
+    selector.penup()
+
+    #explains rules
+    intro = ["COCONUT CATCHER","Use LEFT / RIGHT arrows to move","Catch falling coconuts",
+        "Easy = 25 points MAX in 45s","Hard = 50 points MAX in 30s","Press SPACE to continue"]
+
+    def show_intro():
+        writer.clear()
+        writer.write(intro[intro_index] + "\n\nPress SPACE",font=("Arial", 12, "bold"))
+
+    show_intro()
+
+    def space():
+        nonlocal state, intro_index #allows varibales inside function to be changed 
+
+        if state == "intro":
+            intro_index += 1 #moves to next line of intro text
+            if intro_index >= len(intro):#if we reached end of intro list
+                state = "mode"#switch to mode selection screen
+                draw_mode()
+            else:
+                show_intro()
+
+        elif state == "mode": #if we are not on the mode selection screen, start the game
+            start_game()
+
+    def left():
+        nonlocal mode #allows changing the difficulty mode variable
+        if state == "mode":
+            mode = "easy"
+            draw_mode()
+
+    def right():
+        nonlocal mode
+        if state == "mode":
+            mode = "hard"
+            draw_mode()
+
+    wn.listen()
+    wn.onkeypress(space, "space")
+    wn.onkeypress(left, "Left")
+    wn.onkeypress(right, "Right")
+
+    def draw_mode():
+        writer.clear()
+        selector.clear()
+
+        writer.goto(-120, 60)
+        writer.write("SELECT MODE", font=("Arial", 16, "bold"))
+
+        writer.goto(-120, 20)
+        writer.write("LEFT = EASY", font=("Arial", 12))
+
+        writer.goto(-120, -10)
+        writer.write("RIGHT = HARD", font=("Arial", 12))
+
+        writer.goto(-120, -60)
+        writer.write("PRESS SPACE TO START", font=("Arial", 12, "bold"))
+
+        selector.goto(-140, 20 if mode == "easy" else -10)
+        selector.write(">", font=("Arial", 18, "bold"))
+    
+
+    # game start
+    def start_game():
+        global points
+        nonlocal state
+        state = "playing"
+
+        writer.clear()
+        selector.clear()
+
+        # settings, amount of coconuts falling depending on mode and the speed with which they fall
+        if mode == "easy":
+            total_coconuts = 25
+            duration = 45
+            speed = 0.5   
+            point = 1
+        else:
+            total_coconuts = 50
+            duration = 30
+            speed = 1.0 
+            point = 1
+
+        spawn_interval = duration / total_coconuts 
+
+        # player (thing that catches coconuts)
+        global player
+        player.showturtle()
+        player.shape("square")
+        player.shapesize(0.5, 3)
+        player.color("black")
+        player.penup()
+        player.goto(0, -220)
+
+        # palm trees
+        tree_tops = []
+        tree_labels = [] # for indicating when coconut will drop
+
+        def draw_tree(x):
+            global t
+            p.hideturtle()
+            p.speed(0)
+
+            p.penup()
+            p.goto(x, -250)
+            p.setheading(90)
+            p.color("#703a16")
+            p.width(14)
+            p.pendown()
+            p.forward(260)
+
+            top_x = x
+            top_y = 10
+          
+            #function for stationary coconuts on top of both trees
+            def draw_coconuts(x, y, size=10, spacing=15): #x,y is the center of the cluster & moves entire group
+                global coco
+                coco.hideturtle()
+                coco.speed(0)
+                
+                # global ground_coconuts
+                # ground_coconuts.append(coco)
+
+                positions = [(0, 0),(spacing, spacing),(-spacing, spacing)]
+
+                for ox, oy in positions:
+                    coco.penup()
+                    coco.goto(x + ox, y + oy) #moves each coconut relative to cluster center 
+                    coco.pendown()
+                    coco.color("#96642d")
+                    coco.begin_fill()
+                    coco.circle(size)
+                    coco.end_fill()
+
+                # dots (these move with the coconut shape)
+                    for dx, dy in [(3, 5), (-3, 5), (0, 9)]:
+                        coco.penup()
+                        coco.goto(x + ox + dx, y + oy + dy)
+                        coco.pendown()
+                        coco.color("black")
+                        coco.begin_fill()
+                        coco.circle(1.2)
+                        coco.end_fill()
+                ground_coconuts.append(coco)
+            
+            #palm tree leaves
+            def leaf(angle):
+                global t
+                p.penup()
+                p.goto(top_x, top_y)
+                p.setheading(angle)
+
+                p.color("#089606")
+                p.width(3)
+                p.pendown()
+
+                p.circle(40, 15)
+
+                for i in range(15):
+                    p.forward(6)
+                    p.left(55)
+                    p.forward(10)
+                    p.backward(10)
+                    p.right(110)
+                    p.forward(10)
+                    p.backward(10)
+                    p.left(55)
+
+                p.penup()
+
+            for a in [170, 140, 110, 60, 30, 10]: #angles at which leaves are drawn
+                leaf(a)
+            draw_coconuts(top_x, top_y-15, size=10, spacing=15)
+
+            tree_tops.append((x, top_y)) #list stores where trees are
+
+            # where warning label is 
+            label = trtl.Turtle()
+            label.hideturtle()
+            label.penup()
+            label.goto(x - 10, top_y + 50)
+            tree_labels.append(label)
+
+        draw_tree(-160)
+        draw_tree(160)
+
+        # game data
+        coconuts = []
+        score = 0
+        start_time = time.time()
+        last_spawn_time = time.time()
+        spawned = 0
+
+        #warning system variables
+        warning_active = False #prevents multiple warnings from appearing at once
+        warning_time = 0 #stores time when warning appears 
+        warning_index = 0 #keeps track of which tree the warning is on
+
+        # coconut spawn
+        def spawn():
+            nonlocal spawned, warning_active
+
+            if spawned >= total_coconuts:
+                return
+
+            x, y = tree_tops[warning_index]  #so that coconut and warning spawn at same tree
+            offset = rand.randint(-50, 50) #how far from the tree coconuts can fall
+
+            c=trtl.Turtle()
+            c.shape("circle")
+            c.color("#96642d")
+            c.penup()
+            c.goto(x + offset, y)
+
+            #adds coconut, turtle object (the coconut), x position (offset from tree,random), starting y (top of tree)
+            coconuts.append({"t": c, "x": x + offset, "y": y})
+
+            spawned += 1 #keeps track of coconuts created
+
+            #clears warning after spawn
+            tree_labels[warning_index].clear()
+            warning_active = False
+
+        # update
+        def update():
+            nonlocal score #allows score to be changed inside this function
+
+            for c in coconuts:
+                c["y"] -= speed #moves coconut downward
+                c["t"].goto(c["x"], c["y"]) #updates visual position on screen
+                if c["y"]<-240:
+                  c["t"].hideturtle()
+
+                #if player catches coconut, collision is detected and coconut hides
+                if abs(player.xcor() - c["x"]) < 25 and abs(player.ycor() - c["y"]) < 25:
+                    score += point #increases score when caught
+                    c["y"] = -999 #move coconut off screen
+                    c["t"].hideturtle() #hide coconut visually
+
+            #once there are several coconuts, makes the newest one fall a little faster
+            #negative list indexing
+            if len(coconuts) > 3:
+                coconuts[-1]["y"] -= 0.3
+
+        def cleanup():
+          #removes coconuts that fell off the bottom, keeps only the ones still on screen
+          coconuts[:] = [c for c in coconuts if c["y"] > -240]
+
+          #makes every other coconut fall a little faster, stepped list indexing
+          for i in range(0, len(coconuts), 2):
+              coconuts[i]["y"] -= 0.2
+
+        #player movement (controls)
+        def coconut_move_left():
+          player.setx(player.xcor() - 20)
+      
+        def coconut_move_right():
+            player.setx(player.xcor() + 20)
+        
+        # clear old controls
+        wn.onkeypress(None, "Left")
+        wn.onkeypress(None, "Right")
+        
+        # coconut controls
+        wn.onkeypress(coconut_move_left, "Left")
+        wn.onkeypress(coconut_move_right, "Right")
+        
+        wn.listen()
+
+        # loop
+        running = True
+
+        def game_loop():
+        
+            nonlocal running
+            nonlocal last_spawn_time
+            nonlocal warning_active
+            nonlocal warning_time
+            nonlocal warning_index
+            nonlocal score
+        
+            if not running:
+                return
+        
+            wn.update()
+        
+            now = time.time()
+        
+            # warning system
+            if (not warning_active) and (spawned < total_coconuts):
+        
+                if now - last_spawn_time >= spawn_interval - 1.0:
+        
+                    warning_index = rand.randint(0, len(tree_labels) - 1)
+        
+                    tree_labels[warning_index].clear()
+                    tree_labels[warning_index].color("red")
+        
+                    tree_labels[warning_index].write(
+                        "!",
+                        font=("Arial", 20, "bold")
+                    )
+        
+                    warning_active = True
+                    warning_time = now
+        
+            # spawn coconuts
+            if now - last_spawn_time >= spawn_interval:
+                spawn()
+                last_spawn_time = now
+        
+            # stop game
+            if now - start_time >= duration:
+        
+                running = False
+        
+                writer.clear()
+        
+                writer.goto(-120, 0)
+        
+                writer.write(
+                    "GAME OVER\nScore: " + str(score),
+                    font=("Arial", 16, "bold")
+                )
+                delay()
+                global points
+                points += score
+                played[0] = True
+                writer.reset()
+                writer.hideturtle()
+                tree_labels[warning_index].reset()
+                tree_labels[warning_index].hideturtle()
+                coco.reset()
+                coco.hideturtle()
+                p.reset()
+                p.hideturtle()
+                player.hideturtle()
+                player.penup()
+                player.goto(1000, 1000)
+                player.clear()
+                for coconut in coconuts:
+                  coconut["t"].hideturtle()
+                  coconut["t"].clear()
+                coconuts.clear()
+                bg.reset()
+                bg.hideturtle()
+                
+                
+                piece.goto(tiles_x[tile],tiles_y[tile]+25)
+                piece.showturtle()
+                cleanup()
+                bind_board_keys()
+                wn.update()
+                # game_state = "board"
+                # wn.onkey(rolled, "r")
+                # wn.listen()
+        
+                return
+        
+            update()
+            cleanup()
+        
+            wn.ontimer(game_loop, 20)
+
+        game_loop()
+    # game_state = "board"
+#for entire maze game     
+def maze_game():
+  bg = trtl.Turtle()
+  bg.hideturtle()
+  bg.speed(0)
+
+  bg.penup()
+  bg.goto(-250, -250)
+  bg.color("#83d1eb")
+  bg.begin_fill()
+  for i in range(4):
+      bg.forward(500)
+      bg.left(90)
+  bg.end_fill()
+  global game_state
+  game_state = "maze"
+  wn.onkeypress(None, "Up")
+  wn.onkeypress(None, "Down")
+  wn.onkeypress(None, "Left")
+  wn.onkeypress(None, "Right")
+  wn.onkeypress(None, "space")
+  # 2. Load and Resize Images
+  try:
+      # Boat Image
+      original_boat = PhotoImage(file="cruise-transparent.gif")
+      small_boat = original_boat.subsample(5, 5) 
+      wn.addshape("tiny_boat", trtl.Shape("image", small_boat))
+      boat_shape = "tiny_boat"
+      
+      # Finish Line Image (200.gif)
+      original_finish = PhotoImage(file="200.gif")
+      # Adjust subsample if the flag is too big/small
+      small_finish = original_finish.subsample(2, 2) 
+      wn.addshape("finish_flag", trtl.Shape("image", small_finish))
+  except:
+      print("Images not found, using shapes.")
+      boat_shape = "turtle"
+  
+  
+  num_walls = 13
+  path_width = 40    
+  wall_len = 40      
+  door_width = 50    
+  barrier_len = 40   
+  
+  for w in range(num_walls):
+      maze_painter.color("brown")
+      if w > 4: 
+          door = rand.randint(path_width, (wall_len - door_width))
+          barrier = rand.randint(path_width, (wall_len - door_width))
+          while abs(door - barrier) < door_width:
+              door = rand.randint(path_width, (wall_len - door_width))
+          maze_painter.forward(door)
+          maze_painter.penup()
+          maze_painter.forward(door_width)
+          maze_painter.pendown()
+          remaining_len = wall_len - door - door_width
+          maze_painter.forward(remaining_len)
+          maze_painter.backward(wall_len - barrier)
+          maze_painter.left(90)
+          maze_painter.forward(barrier_len)
+          maze_painter.backward(barrier_len)
+          maze_painter.right(90)
+          maze_painter.forward(wall_len - barrier)
+      else:
+          maze_painter.forward(wall_len)
+      maze_painter.left(90)
+      wall_len += path_width
+  
+  maze_painter.hideturtle()
+  # 4. Finish Line Setup (Randomized at the ends)
+  finish_line = trtl.Turtle()
+  try:
+      finish_line.shape("finish_flag.gif")
+  except:
+      finish_line.shape("circle")
+      finish_line.color("red")
+  finish_line.penup()
+  
+  # Randomly pick one of the 4 outer corners of the maze area
+  corners = [(-250, 250), (250, 250), (250, -250), (-250, -250)]
+  # finish_line.goto(rand.choice(corners))
+  finish_line.goto(230,-220)
+  
+  # 5. Runner (Boat) Setup
+  runner = trtl.Turtle()
+  runner.shape(boat_shape) 
+  runner.penup()
+  runner.goto(0,0)
+  
+  # 6. Movement and Win Condition
+  def check_win():
+      global points
+      global game_state
+      if runner.distance(finish_line) < 30:
+          runner.write("YOU WIN!", align="center", font=("Arial", 24, "bold"))
+          points+=50
+          wn.onkeypress(None, "Up") # Disable keys
+          wn.onkeypress(None, "Down")
+          wn.onkeypress(None, "Left")
+          wn.onkeypress(None, "Right")
+          game_state = "board"
+          maze_painter.reset()
+          maze_painter.hideturtle()
+          runner.reset()
+          runner.hideturtle()
+          finish_line.reset()
+          finish_line.hideturtle()
+          piece.goto(tiles_x[tile],tiles_y[tile]+25)
+          piece.showturtle()
+          played[1]=True
+          bg.reset()
+          bg.hideturtle()
+          wn.update()
+          
+          bind_board_keys()
+          wn.listen()
+  
+  def maze_move_up():
+    runner.setheading(90)
+    runner.forward(20)
+    wn.update()
+    check_win()
+
+  def maze_move_down():
+      runner.setheading(270)
+      runner.forward(20)
+      wn.update()
+      check_win()
+  
+  def maze_move_left():
+      runner.setheading(180)
+      runner.forward(20)
+      wn.update()
+      check_win()
+  
+  def maze_move_right():
+      runner.setheading(0)
+      runner.forward(20)
+      wn.update()
+      check_win()
+  
+  wn.onkeypress(maze_move_up, "Up")
+  wn.onkeypress(maze_move_down, "Down")
+  wn.onkeypress(maze_move_left, "Left")
+  wn.onkeypress(maze_move_right, "Right")
+  
+  wn.listen()
+  wn.update()
+#for delay to prevent rushing and allowing little pauses      
+def delay(seconds=2):
+    end = time.time() + seconds
+    while time.time() < end:
+        wn.update()
+#for entire shark chase game
+def shark_game():
+  # Instructions
+  def rules():
+    global rule
+    rule = trtl.Turtle()
+    rule.hideturtle()
+    rule.penup()
+    rule.goto(-170,100)
+    rule.write("WELCOME TO THE SHARK GAME!", font=("Arial", 20))
+    rule.goto(-30,50)
+    rule.write("Rules:", font=("Arial", 20))
+    rule.goto(-210,20)
+    rule.write("1. Press arrow keys for turning and press 'g' to move!", font=("Arial", 18))
+    rule.goto(-150,-10)
+    rule.write("2. Collect coins, but avoid the shark!", font=("Arial", 18))
+    rule.goto(-190,-40)
+    rule.write("3. Bigger player or shark gets you more points!", font=("Arial", 18))
+    rule.goto(-60,-70)
+    rule.write("GOOD LUCK!", font=("Arial", 18))
+    rule.goto(-90,-100)
+    rule.write("Press 's' to start game", font=("Arial", 18))
+  
+  # Input from player
+  player_name = ""
+  t_shape = ""
+  t_size = 0
+  shark_size = 0
+  
+  # Depending on user input users can get more points
+  t_size_pt = 0
+  shark_size_pt = 0
+  def point_calculator():
+    global t_size_pt
+    global shark_size_pt
+    if t_size <= 5 and t_size >= 2:
+      difference = t_size - 2
+      t_size_pt = int(difference) * 2
+    if 3 <= shark_size <= 6:
+      difference = shark_size - 3
+      shark_size_pt = int(difference) * 2
+  
+  # Set up
+  global player
+  player = trtl.Turtle()
+  player.showturtle()
+  def making_player():
+    player.penup()
+    player.goto(0,-210)
+    player.setheading(90)
+    player.shape(t_shape)
+    player.turtlesize(t_size)
+  font_setup = ("Arial", 20, "normal")
+  points = [] # point counts
+  
+  # Timer info
+  timer = [45]
+  timer_up = [False]
+  counter =  trtl.Turtle()
+  counter.penup()
+  counter.hideturtle()
+  counter.goto(130,210) # Sets the countdown to the top right corner
+  # Timer
+  # The timer
+  def countdown():
+    counter.clear()
+    if timer[0] == 0:
+      timer_up[0] = True
+      total_points = len(points) * 5 + t_size_pt + shark_size_pt
+      final_screen(total_points)
+    else:
+      counter.write("Timer: " + str(timer[0]), font=font_setup)
+      timer[0] -= 1
+      wn.ontimer(countdown, 1000)
+      
+  # Drawer
+  drawer = trtl.Turtle()
+  def circle(x,y,r,color): # Takes in x,y coordinates and color
+    drawer.goto(x,y)
+    drawer.pencolor(color)
+    drawer.fillcolor(color)
+    drawer.begin_fill()
+    drawer.circle(r)
+    drawer.end_fill()
+  def background():
+    drawer.hideturtle()
+    circle(0,-300,1000,'#609cf7')
+    x = 0
+    y = 0
+    colors = ['#6aa2f7','#79a8f2','#8eb9fa','#a2c4fa','#c0d7fa','#e3eeff'] # darkest to lightest
+    radius = [300,250,200,150,100,50]
+    for i in range(6):
+      circle(x,y,radius[i],colors[i])
+      y += 40
+      
+  # Coin
+  coin_list = []
+  def coin(x,y):
+    coin = trtl.Turtle()
+    coin_list.append(coin)
+    coin.penup()
+    coin.shape('circle')
+    coin.pencolor('#FFD700') # gold
+    coin.fillcolor('#FFD700') # gold
+    coin.turtlesize(2)
+    coin.goto(x,y)
+    coin_tuples = (x,y)
+    return coin_tuples
+  # Taking coin positions
+  def coin_positions():
+    coin_positions = []
+    for i in range(9):
+      coin_pos = coin(rand.randint(-240,240),rand.randint(-240,240)) 
+      coin_positions.append(coin_pos)
+    return coin_positions
+  
+  # Shark
+  shark_list = []
+  def shark():
+    # Set up
+    wn.tracer(0)
+    x = rand.randint(-250,250)
+    y = rand.randint(-200,250)
+    # Shark tail
+    shark_tail = trtl.Turtle()
+    shark_tail.penup()
+    shark_tail.fillcolor('blue')
+    shark_tail.shape('triangle')
+    shark_tail.turtlesize(shark_size)
+    shark_tail.goto(x-shark_size*10,y)
+    shark_tail.speed(7) # CHANGE WHEN LEVEL IS MADE
+    shark_list.append(shark_tail)
+    # Shark head
+    shark_head = trtl.Turtle()
+    shark_head.penup()
+    shark_head.fillcolor('blue')
+    shark_head.turtlesize(shark_size)
+    shark_head.shape('circle')
+    shark_head.goto(x,y)
+    shark_head.speed(7) # CHANGE WHEN LEVEL IS MADE
+    shark_list.append(shark_head)
+    # Shark jaw
+    shark_jaw = trtl.Turtle()
+    shark_jaw.penup()
+    shark_jaw.fillcolor('#609cf7')
+    shark_jaw.pencolor('#609cf7')
+    # perfecting jaw position
+    if shark_size == 3:
+      shark_jaw.turtlesize(shark_size/2)
+      shark_jaw.goto(x+22,y)
+    else: 
+      shark_jaw.turtlesize(shark_size/2)
+      shark_jaw.goto(x+shark_size*7,y)
+    shark_jaw.shape('triangle')
+    shark_jaw.setheading(180)
+    shark_jaw.speed(7) # CHANGE WHEN LEVEL IS MADE
+    shark_list.append(shark_jaw)
+    wn.tracer(0)
+    def move_shark():
+      if timer_up[0]:
+        return
+      new_x = rand.randint(-250,250)
+      new_y = rand.randint(-250,250)
+      current_x = shark_list[1].xcor()
+      current_y = shark_list[1].ycor()
+      x_move = new_x - current_x
+      y_move = new_y - current_y
+      if abs(y_move) > abs(x_move):
+        x_change = x_move/abs(y_move)
+        y_change = y_move/abs(y_move)
+        total = abs(y_move)
+      else:
+        x_change = x_move/abs(x_move)
+        y_change = y_move/abs(x_move)
+        total = abs(x_move)
+      steps_done = [0]
+      def step():
+        if steps_done[0] < int(total) and not timer_up[0]:
+          for s in shark_list:
+            s.goto(s.xcor()+x_change, s.ycor()+y_change)
+          wn.update()
+          steps_done[0] += 1
+          wn.ontimer(step, 10)
+        elif not timer_up[0]:
+          wn.ontimer(move_shark, 100)
+      step()
+    move_shark()
+  
+  # Player movements
+  def face_up():
+    player.setheading(90)
+  def face_right():
+    player.setheading(0)
+  def face_down():
+    player.setheading(270)
+  def face_left():
+    player.setheading(180)
+  
+  # Distance calculator using distance formula
+  coin_cors = coin_positions()
+  def distance_calc(x,y):
+    player_cors = [x,y]
+    # Distance from player to coin
+    distance_pc = []
+    for i in range(len(coin_list)):
+      coin_dis = math.sqrt((player_cors[0] - coin_cors[i][0])**2 + (player_cors[1] - coin_cors[i][1])**2)
+      distance_pc.append(coin_dis)
+      # Detecting if the turtle is close enough to the coin
+    for i in range(len(distance_pc)):
+      if distance_pc[i] <= 10:
+        points.append(5)
+        coin_list[i].hideturtle()
+        coin_list.pop(i)
+        coin_cors.pop(i)
+        break
+    # Distance from player to the shark
+    shark_x = shark_list[1].xcor()
+    shark_y = shark_list[1].ycor()
+    shark_cor = [shark_x,shark_y]
+    shark_dis = math.sqrt((player_cors[0] - shark_cor[0])**2 + (player_cors[1] - shark_cor[1])**2)
+    if shark_dis <= (shark_size *15):
+      print("You got eaten by the shark")
+      drawer.clear()
+      for i in range(3):
+        shark_list[i].hideturtle()
+      for i in range(len(coin_list)):
+        coin_list[i].hideturtle()
+      player.hideturtle()
+      counter.clear()
+      total_points = len(points) * 5 + t_size_pt + shark_size_pt
+      final_screen(total_points)
+    if coin_list == []:
+      print("Congrats! You got all the coins!")
+      drawer.clear()
+      for i in range(3):
+        shark_list[i].hideturtle()
+      for i in range(len(coin_list)):
+        coin_list[i].hideturtle()
+      player.hideturtle()
+      counter.clear()
+      total_points = len(points) * 5 + t_size_pt + shark_size_pt
+      final_screen(total_points)
+  
+  # Final screen that displays points and name
+  def final_screen(total_points):
+    end_writer = trtl.Turtle()
+    end_writer.hideturtle()
+    end_writer.penup()
+    global player_name
+    player_name = player_name.lower() # Everything lowercase
+    player_name = player_name.title() # Captialize first letter
+    
+    player_name_list = list(player_name)
+    if len(player_name_list) > 8:
+      for i in range(len(player_name_list) - 8):
+        player_name_list.pop()
+      player = "".join(player_name_list)
+      dots = "..."
+      player_name = player + dots
+    else:
+      player_name = "".join(player_name_list)
+    end_writer.goto(-150,0)
+    end_writer.write("Congrats! You got " + str(total_points) + " points!", font=("Arial", 19))
+    global points
+    points+=total_points
+    delay()
+    wn.clear()
+    wn.tracer(0)
+    wn.bgcolor("#A2DFEB")
+    piece.penup()
+    piece.shape(piece_shape)
+    piece.color(piece_color)
+    background()
+    bind_board_keys()
+    if tile>=26:
+      won()
+    else:
+      piece.goto(tiles_x[tile], tiles_y[tile] + 25)
+      piece.showturtle()
+  
+  def move_player():
+    player.forward(4)
+    x = player.xcor()
+    y = player.ycor()
+    distance_calc(x,y)
+  
+  # rules() # Calls function
+  
+  def game():
+    nonlocal t_shape,t_size,shark_size
+    global player_name
+    rules()
+    player_name = input("What is your name?")
+    t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
+    t_size = int(input("What size do you want your turtle to be? Choose from interval [2,5]"))
+    shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
+    point_calculator()
+    # EVENTS
+    background()
+    wn.tracer(1)
+    making_player()
+    # Moving player
+    wn.onkeypress(face_up, "Up")
+    wn.onkeypress(face_right, "Right")
+    wn.onkeypress(face_down, "Down")
+    wn.onkeypress(face_left, "Left")
+    wn.onkeypress(move_player, "g")
+    wn.listen()
+    countdown()
+    shark()
+  rules()
+  wn.onkeypress(game, "s")
+  wn.listen()
+  
+#for setup including input and background establishment
+background()
+piece_color=input("What color would you like your piece to be?: ")
+piece.color(piece_color)
+piece_shape=input("What shape would you like your piece to be? Choices: 'arrow', 'turtle', 'circle', 'square', 'triangle', 'classic': ")
+piece.shape(piece_shape)
+wn.listen()
+piece.showturtle()
+print("")
+print("It seems you are on the wrong beach. You'll need to head North to get to the right one.")
+print("Be careful, there will be many obstacles on your journey.\n")
+print("Press r to roll the dice!")
+delay()
+wn.listen()
+wn.onkey(rolled, "r")
+wn.mainloop()
+
