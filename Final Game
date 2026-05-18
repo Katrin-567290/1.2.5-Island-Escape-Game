@@ -519,6 +519,17 @@ def dice():
   wn.update()
 #for executing win text
 def won():
+  bg = trtl.Turtle()
+  bg.hideturtle()
+  bg.speed(0)
+  bg.penup()
+  bg.goto(-250, -250)
+  bg.color('white')
+  bg.begin_fill()
+  for i in range(4):
+    bg.forward(500)
+    bg.left(90)
+  bg.end_fill()
   global win
   win=True
   global points
@@ -1379,7 +1390,8 @@ def shark_game():
     player.turtlesize(t_size)
   font_setup = ("Arial", 20, "normal")
   points = [] # point counts
-  
+  # Coin
+  coin_list = []
   # Timer info
   timer = [45]
   timer_up = [False]
@@ -1393,14 +1405,15 @@ def shark_game():
     counter.clear()
     if timer[0] == 0:
       timer_up[0] = True
+      for i in range(len(coin_list)):
+        coin_list[i].hideturtle()
       total_points = len(points) * 5 + t_size_pt + shark_size_pt
       final_screen(total_points)
     else:
       counter.write("Timer: " + str(timer[0]), font=font_setup)
       timer[0] -= 1
       wn.ontimer(countdown, 1000)
-    # Coin
-  coin_list = []
+  # Coins
   def coin(x,y):
     coin = trtl.Turtle()
     coin_list.append(coin)
@@ -1552,6 +1565,8 @@ def shark_game():
         coin_list[i].hideturtle()
       player.hideturtle()
       counter.clear()
+      for i in range(len(coin_list)):
+        coin_list[i].hideturtle()
       total_points = len(points) * 5 + t_size_pt + shark_size_pt
       final_screen(total_points)
     if coin_list == []:
