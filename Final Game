@@ -76,7 +76,7 @@ tiles=[]
 colors=["#F17777","#FFA96F","#FFBF77","#FFE590","#CCDD8A","#59C6EA","#CE71B8","#F3AEBF","#c7e3a4","#fd9a9c","#3d7f97","#D9E1FF","#7A75BE","#F177A8","#FD998A","#FEBA9C","#8FD1F3","#FDE673","#F8AF6E","#B77DD6","#DEB8DA","#F5B5B5","#C0DDA6","#CBF2D3","#D6AEC0","#A1EEF5",]
 tiles_x=[]
 tiles_y=[]
-games=[6,15,19]
+games=[6,15]
 played=[False,False,False]
 encounter=[]
 encounter_x=[]
@@ -175,7 +175,7 @@ def background():
     t.goto(bg_x,bg_y)
   bg_y-=50
   bg_x-=50
-  t.goto(bg_x,bg_y)
+  t.goto(bg_x,bg_y) 
   for i in range(10,17,1):
     tiles_x.append(bg_x+25)
     tiles_y.append(bg_y)
@@ -408,17 +408,17 @@ def dice():
               tile=0
             print("You went back "+str(leap)+" places.\n")
             points-=5
-            if tile==19 and played[2]==False:
-              print("You spot some coins and grab one. You got some points.")
-              points+=5
-              delay()
-              print("A fin emerges from the water.")
-              print("The shark wants your points.")
-              print("It starts chasing you.\n")
-              piece.hideturtle()
-              shark_game()
-              piece.goto(tiles_x[tile],tiles_y[tile]+25)
-              played[i]=True
+            # if tile==19 and played[2]==False:
+            #   print("You spot some coins and grab one. You got some points.")
+            #   points+=5
+            #   delay()
+            #   print("A fin emerges from the water.")
+            #   print("The shark wants your points.")
+            #   print("It starts chasing you.\n")
+            #   piece.hideturtle()
+            #   shark_game()
+            #   piece.goto(tiles_x[tile],tiles_y[tile]+25)
+            #   played[i]=True
           else:
             if i==0:
               leap=rand.randint(3,5)
@@ -450,21 +450,21 @@ def dice():
                 piece.hideturtle()
                 maze_game()
                 played[i]=True
-            else:
-              leap=rand.randint(1,5)
-              tile-=leap
-              print("You went back "+str(leap)+" places.\n")
-              points-=5
-              if tile==19 and played[i]==False:
-                print("You spot some coins and grab one. You got some points.")
-                points+=5
-                delay()
-                print("A fin emerges from the water.")
-                print("The shark wants your points.")
-                print("It starts chasing you.\n")
-                piece.hideturtle()
-                shark_game()
-                played[i]=True
+            # else:
+            #   leap=rand.randint(1,5)
+            #   tile-=leap
+            #   print("You went back "+str(leap)+" places.\n")
+            #   points-=5
+            #   if tile==19 and played[i]==False:
+            #     print("You spot some coins and grab one. You got some points.")
+            #     points+=5
+            #     delay()
+            #     print("A fin emerges from the water.")
+            #     print("The shark wants your points.")
+            #     print("It starts chasing you.\n")
+            #     piece.hideturtle()
+            #     shark_game()
+            #     played[i]=True
         piece.goto(tiles_x[tile],tiles_y[tile]+25)
     for i in range(len(games)):
       if games[i]==tile and played[i]==False:
@@ -490,17 +490,17 @@ def dice():
           piece.goto(tiles_x[tile],tiles_y[tile]+25)
           played[i]=True
           return
-        else:
-          print("You spot some coins and grab one. You got some points.")
-          points+=5
-          delay()
-          print("A fin emerges from the water.")
-          print("The shark wants your points.")
-          print("It starts chasing you.\n")
-          piece.hideturtle()
-          shark_game()
-          piece.goto(tiles_x[tile],tiles_y[tile]+25)
-          played[i]=True
+        # else:
+        #   print("You spot some coins and grab one. You got some points.")
+        #   points+=5
+        #   delay()
+        #   print("A fin emerges from the water.")
+        #   print("The shark wants your points.")
+        #   print("It starts chasing you.\n")
+        #   piece.hideturtle()
+        #   shark_game()
+        #   piece.goto(tiles_x[tile],tiles_y[tile]+25)
+        #   played[i]=True
     if play==False and whirl==False:
       pieces()
   else:
@@ -1399,7 +1399,25 @@ def shark_game():
       counter.write("Timer: " + str(timer[0]), font=font_setup)
       timer[0] -= 1
       wn.ontimer(countdown, 1000)
-      
+    # Coin
+  coin_list = []
+  def coin(x,y):
+    coin = trtl.Turtle()
+    coin_list.append(coin)
+    coin.penup()
+    coin.shape('circle')
+    coin.pencolor('#FFD700') # gold
+    coin.fillcolor('#FFD700') # gold
+    coin.turtlesize(2)
+    coin.goto(x,y)
+    coin_tuples = (x,y)
+    return coin_tuples
+  coin_cors = []
+  # Taking coin positions
+  def coin_positions():
+    for i in range(9):
+      coin_pos = coin(rand.randint(-240,240),rand.randint(-240,240)) 
+      coin_cors.append(coin_pos)   
   # Drawer
   drawer = trtl.Turtle()
   def circle(x,y,r,color): # Takes in x,y coordinates and color
@@ -1419,28 +1437,9 @@ def shark_game():
     for i in range(6):
       circle(x,y,radius[i],colors[i])
       y += 40
-      
-  # Coin
-  coin_list = []
-  def coin(x,y):
-    coin = trtl.Turtle()
-    coin_list.append(coin)
-    coin.penup()
-    coin.shape('circle')
-    coin.pencolor('#FFD700') # gold
-    coin.fillcolor('#FFD700') # gold
-    coin.turtlesize(2)
-    coin.goto(x,y)
-    coin_tuples = (x,y)
-    return coin_tuples
-  # Taking coin positions
-  def coin_positions():
-    coin_positions = []
-    for i in range(9):
-      coin_pos = coin(rand.randint(-240,240),rand.randint(-240,240)) 
-      coin_positions.append(coin_pos)
-    return coin_positions
-  
+    coin_positions()
+    
+
   # Shark
   shark_list = []
   def shark():
@@ -1524,7 +1523,6 @@ def shark_game():
     player.setheading(180)
   
   # Distance calculator using distance formula
-  coin_cors = coin_positions()
   def distance_calc(x,y):
     player_cors = [x,y]
     # Distance from player to coin
@@ -1616,7 +1614,6 @@ def shark_game():
   def game():
     nonlocal t_shape,t_size,shark_size
     global player_name
-    wn.tracer(0)
     rules()
     player_name = input("What is your name?")
     t_shape = input("What shape do you want your turtle to be? Choices are arrow, turtle, circle, square, triangle, classic")
@@ -1624,8 +1621,8 @@ def shark_game():
     shark_size = int(input("What size do you want the shark to be? Choose from interval [3,6]"))
     point_calculator()
     # EVENTS
-    wn.tracer(1)
     background()
+    wn.tracer(1)
     making_player()
     # Moving player
     wn.onkeypress(face_up, "Up")
@@ -1651,8 +1648,10 @@ piece.showturtle()
 print("")
 print("It seems you are on the wrong beach. You'll need to head North to get to the right one.")
 print("Be careful, there will be many obstacles on your journey.\n")
-print("Press r to roll the dice!")
 delay()
 wn.listen()
 wn.onkey(rolled, "r")
 wn.mainloop()
+
+
+
